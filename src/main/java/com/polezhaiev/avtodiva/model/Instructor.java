@@ -1,4 +1,3 @@
-// Instructor.java
 package com.polezhaiev.avtodiva.model;
 
 import jakarta.persistence.*;

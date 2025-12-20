@@ -36,7 +36,6 @@ public class WindowServiceImpl implements WindowService {
         Car car = carRepository.findByName(window.getCarName())
                 .orElseThrow(() -> new RuntimeException("Car not found"));
 
-        // Создаём слот
         ScheduleSlot slot = new ScheduleSlot();
         slot.setDate(window.getDate());
         slot.setTimeFrom(window.getTimeFrom());
@@ -80,7 +79,6 @@ public class WindowServiceImpl implements WindowService {
         return fullDay;
     }
 
-    // Добавление всех новых окон для каждого инструктора со всеми машинами
     @Override
     public void addFreeWindowsForEachInstructor(int days) {
         List<Instructor> allInstructors = instructorRepository.findAll();
@@ -130,7 +128,6 @@ public class WindowServiceImpl implements WindowService {
         List<Instructor> allInstructors = instructorRepository.findAll();
 
         for (Instructor instructor : allInstructors) {
-            // стартуем с даты последнего слота у этого инструктора (важно!)
             LocalDate lastDate = scheduleSlotRepository.findMaxFreeDateByInstructorAndCar(instructor, car);
             LocalDate startDate = lastDate != null ? lastDate.plusDays(1) : LocalDate.now();
 
@@ -171,7 +168,6 @@ public class WindowServiceImpl implements WindowService {
         List<Car> allCars = carRepository.findAll();
 
         for (Car car : allCars) {
-            // стартуем с даты последнего слота у этого инструктора (важно!)
             LocalDate lastDate = scheduleSlotRepository.findMaxFreeDateByInstructorAndCar(instructor, car);
             LocalDate startDate = lastDate != null ? lastDate.plusDays(1) : LocalDate.now();
 
