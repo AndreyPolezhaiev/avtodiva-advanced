@@ -1,11 +1,55 @@
 package com.polezhaiev.avtodiva.service.car;
 
-
 import com.polezhaiev.avtodiva.model.Car;
+import com.polezhaiev.avtodiva.repository.CarRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface CarService {
-    void saveCar(Car car);
-    void deleteByName(String name);
-    String[] getCarsNames();
-    Car findByName(String name);
+import java.util.List;
+
+@Service
+@AllArgsConstructor
+public class CarService {
+    private final CarRepository carRepository;
+
+    @Caching(evict = {
+            @CacheEvict(value = "carNames", allEntries = true),
+            @CacheEvict(value = "carByName", key = "#car.name")
+    })
+    public void saveCar(Car car) {
+        if (car == null || car.getName() == null || car.getName().isBlank()) {
+            throw new IllegalArgumentException("Ім'я машини не може бути порожнім!");
+        }
+
+        if (carRepository.existsByNameIgnoreCase(car.getName())) {
+            throw new IllegalStateException("Машина з іменем '" + car.getName() + "' вже існує!");
+        }
+
+        car.setName(car.getName().trim());
+        carRepository.save(car);
+    }
+
+    @Cacheable("carNames")
+    public String[] getCarsNames() {
+        List<String> names = carRepository.findAllCarNames();
+        return names.toArray(new String[0]);
+    }
+
+    @Cacheable("carByName")
+    public Car findByName(String name) {
+        return carRepository.findByName(name).orElseThrow(() -> new RuntimeException("Can't find car by name: " + name));
+    }
+
+    @Caching(evict = {
+            @CacheEvict(value = "carNames", allEntries = true),
+            @CacheEvict(value = "carByName", key = "#name")
+    })
+    @Transactional
+    public void deleteByName(String name) {
+        carRepository.deleteByName(name);
+    }
 }

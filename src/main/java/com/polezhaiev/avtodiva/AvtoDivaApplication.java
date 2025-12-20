@@ -1,11 +1,9 @@
 package com.polezhaiev.avtodiva;
 
-import com.polezhaiev.avtodiva.ui.MainFrame;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.swing.*;
 
@@ -18,11 +16,6 @@ public class AvtoDivaApplication {
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
         dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
 
-		ConfigurableApplicationContext context = SpringApplication.run(AvtoDivaApplication.class, args);
-
-		SwingUtilities.invokeLater(() -> {
-			MainFrame mainFrame = context.getBean(MainFrame.class);
-			mainFrame.setVisible(true);
-		});
+		SpringApplication.run(AvtoDivaApplication.class, args);
 	}
 }
