@@ -1,5 +1,8 @@
 package com.polezhaiev.avtodiva.service.car;
 
+import com.polezhaiev.avtodiva.dto.car.CarDto;
+import com.polezhaiev.avtodiva.dto.car.CarResponseDto;
+import com.polezhaiev.avtodiva.mapper.CarMapper;
 import com.polezhaiev.avtodiva.model.Car;
 import com.polezhaiev.avtodiva.repository.CarRepository;
 import lombok.AllArgsConstructor;
@@ -9,47 +12,51 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class CarService {
     private final CarRepository carRepository;
+    private final CarMapper carMapper;
 
     @Caching(evict = {
             @CacheEvict(value = "carNames", allEntries = true),
             @CacheEvict(value = "carByName", key = "#car.name")
     })
-    public void saveCar(Car car) {
-        if (car == null || car.getName() == null || car.getName().isBlank()) {
-            throw new IllegalArgumentException("Ім'я машини не може бути порожнім!");
+    public CarResponseDto saveCar(CarDto carDto) {
+        if (carRepository.existsByNameIgnoreCase(carDto.getName())) {
+            throw new IllegalStateException("Машина з іменем '" + carDto.getName() + "' вже існує!");
         }
 
-        if (carRepository.existsByNameIgnoreCase(car.getName())) {
-            throw new IllegalStateException("Машина з іменем '" + car.getName() + "' вже існує!");
-        }
+        Car car = carMapper.toModel(carDto);
+        car.setSlots(new ArrayList<>());
 
-        car.setName(car.getName().trim());
-        carRepository.save(car);
+        Car savedCar = carRepository.save(car);
+
+        return carMapper.toResponseDto(savedCar);
     }
 
     @Cacheable("carNames")
-    public String[] getCarsNames() {
-        List<String> names = carRepository.findAllCarNames();
-        return names.toArray(new String[0]);
+    public List<CarResponseDto> getAllCarsNames() {
+        return carRepository.findAll()
+                .stream()
+                .map(carMapper::toResponseDto)
+                .toList();
     }
 
     @Cacheable("carByName")
-    public Car findByName(String name) {
-        return carRepository.findByName(name).orElseThrow(() -> new RuntimeException("Can't find car by name: " + name));
+    public CarResponseDto findCarById(Long id) {
+        Car carFromRepo = carRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Can't find car by id: " + id)
+        );
+
+        return carMapper.toResponseDto(carFromRepo);
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "carNames", allEntries = true),
-            @CacheEvict(value = "carByName", key = "#name")
-    })
     @Transactional
-    public void deleteByName(String name) {
-        carRepository.deleteByName(name);
+    public void deleteById(Long id) {
+        carRepository.deleteById(id);
     }
 }

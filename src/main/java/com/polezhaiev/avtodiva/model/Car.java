@@ -3,7 +3,6 @@ package com.polezhaiev.avtodiva.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,5 +21,5 @@ public class Car {
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )
-    private List<ScheduleSlot> slots = new ArrayList<>();
+    private List<ScheduleSlot> slots;
 }
