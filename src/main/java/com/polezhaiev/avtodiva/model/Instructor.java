@@ -5,8 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,10 +29,10 @@ public class Instructor {
             fetch = FetchType.EAGER
     )
     @ToString.Exclude
-    private List<Weekend> weekends = new ArrayList<>();
+    private List<Weekend> weekends;
 
     @OneToMany(mappedBy = "instructor",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    private List<ScheduleSlot> slots = new ArrayList<>();
+    private List<ScheduleSlot> slots;
 }

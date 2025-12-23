@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class PostgresBackupScheduler {
 
-    private static final String PG_DUMP_PATH = "C:\\Program Files\\PostgreSQL\\17\\bin\\pg_dump.exe";
+    private static final String PG_DUMP_PATH = "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_dump.exe";
     private static final String BACKUP_DIR = "D:\\backups";
     private static final String DB_NAME = "avtodiva";
     private static final String DB_USER = "postgres";

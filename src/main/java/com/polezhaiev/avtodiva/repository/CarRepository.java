@@ -11,9 +11,5 @@ import java.util.Optional;
 @Repository
 public interface CarRepository extends JpaRepository<Car, Long> {
     Optional<Car> findByName(String name);
-    void deleteByName(String name);
     boolean existsByNameIgnoreCase(String name);
-
-    @Query("select c.name from Car c where c.name is not null")
-    List<String> findAllCarsNames();
 }
