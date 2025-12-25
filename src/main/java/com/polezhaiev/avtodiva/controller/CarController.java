@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/cars")
 public class CarController {
     private final CarService carService;
@@ -23,27 +23,27 @@ public class CarController {
     @PostMapping
     public ResponseEntity<CarResponseDto> createCar(@RequestBody @Valid CreateCarRequestDto requestDto) {
         CarDto carDto = carMapper.toDto(requestDto);
-        CarResponseDto carResponseDto = carService.saveCar(carDto);
+        CarResponseDto carResponseDto = carService.save(carDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(carResponseDto);
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<CarResponseDto>> getAllCars() {
-        List<CarResponseDto> allCarsNames = carService.getAllCars();
+        List<CarResponseDto> allCars = carService.findAll();
 
-        return ResponseEntity.status(HttpStatus.OK).body(allCarsNames);
+        return ResponseEntity.status(HttpStatus.OK).body(allCars);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CarResponseDto> getCarById(@PathVariable Long id) {
-        CarResponseDto carByName = carService.findCarById(id);
+        CarResponseDto carById = carService.findById(id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(carByName);
+        return ResponseEntity.status(HttpStatus.OK).body(carById);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+    public ResponseEntity<String> deleteCarById(@PathVariable Long id) {
         carService.deleteById(id);
         String response = "Car by id " + id + " was successfully removed";
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -53,7 +53,7 @@ public class CarController {
     public ResponseEntity<CarResponseDto> updateCarById(@PathVariable Long id,
                                                         @RequestBody @Valid CreateCarRequestDto requestDto) {
         CarDto carDto = carMapper.toDto(requestDto);
-        CarResponseDto carResponseDto = carService.updateCar(id, carDto);
+        CarResponseDto carResponseDto = carService.updateById(id, carDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(carResponseDto);
     }

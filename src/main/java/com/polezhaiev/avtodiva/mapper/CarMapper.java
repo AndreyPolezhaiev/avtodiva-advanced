@@ -10,6 +10,6 @@ import org.mapstruct.Mapper;
 @Mapper(config = MapperConfig.class)
 public interface CarMapper {
     CarResponseDto toResponseDto(Car car);
-    Car toModel(CarDto carDto);
-    CarDto toDto(CreateCarRequestDto carRequestDto);
+    Car toModel(CarDto dto);
+    CarDto toDto(CreateCarRequestDto requestDto);
 }

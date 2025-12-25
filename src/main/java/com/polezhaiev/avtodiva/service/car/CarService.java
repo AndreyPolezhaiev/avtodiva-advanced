@@ -19,7 +19,7 @@ public class CarService {
     private final CarRepository carRepository;
     private final CarMapper carMapper;
 
-    public CarResponseDto saveCar(CarDto carDto) {
+    public CarResponseDto save(CarDto carDto) {
         if (carRepository.existsByNameIgnoreCase(carDto.getName())) {
             throw new IllegalStateException("Car with name '" + carDto.getName() + "' already exists!");
         }
@@ -32,14 +32,14 @@ public class CarService {
         return carMapper.toResponseDto(savedCar);
     }
 
-    public List<CarResponseDto> getAllCars() {
+    public List<CarResponseDto> findAll() {
         return carRepository.findAll()
                 .stream()
                 .map(carMapper::toResponseDto)
                 .toList();
     }
 
-    public CarResponseDto findCarById(Long id) {
+    public CarResponseDto findById(Long id) {
         Car carFromRepo = carRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Can't find car by id: " + id)
         );
@@ -56,12 +56,12 @@ public class CarService {
         carRepository.delete(carFromRepo);
     }
 
-    public CarResponseDto updateCar(Long id, CarDto carDto) {
+    public CarResponseDto updateById(Long id, CarDto dto) {
         Car carFromRepo = carRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Can't find car by id: " + id)
         );
 
-        carFromRepo.setName(carDto.getName());
+        carFromRepo.setName(dto.getName());
 
         Car updatedCar = carRepository.save(carFromRepo);
 

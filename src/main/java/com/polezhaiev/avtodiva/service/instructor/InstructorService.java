@@ -1,73 +1,76 @@
 package com.polezhaiev.avtodiva.service.instructor;
 
+import com.polezhaiev.avtodiva.dto.instructor.InstructorDetailedResponseDto;
+import com.polezhaiev.avtodiva.dto.instructor.InstructorDto;
+import com.polezhaiev.avtodiva.dto.instructor.InstructorResponseDto;
+import com.polezhaiev.avtodiva.mapper.InstructorMapper;
 import com.polezhaiev.avtodiva.model.Instructor;
 import com.polezhaiev.avtodiva.repository.InstructorRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class InstructorService {
     private final InstructorRepository instructorRepository;
+    private final InstructorMapper instructorMapper;
 
-    @Cacheable("instructors")
-    public List<Instructor> findAllInstructors() {
-        return instructorRepository.findAll();
-    }
-
-    @Caching(evict = {
-            @CacheEvict(value = "instructors", allEntries = true),
-            @CacheEvict(value = "instructorNames", allEntries = true),
-            @CacheEvict(value = "instructorByName", key = "#instructor.name")
-    })
-    public void saveInstructor(Instructor instructor) {
-        if (instructor == null || instructor.getName() == null || instructor.getName().isBlank()) {
-            throw new IllegalArgumentException("Ім'я інструктора не може бути порожнім!");
+    public InstructorResponseDto save(InstructorDto dto) {
+        if (instructorRepository.existsByNameIgnoreCase(dto.getName())) {
+            throw new IllegalStateException("Instructor with name '" + dto.getName() + "' already exists!");
         }
 
-        if (instructorRepository.existsByNameIgnoreCase(instructor.getName())) {
-            throw new IllegalStateException("Інструктор з іменем '" + instructor.getName() + "' вже існує!");
-        }
-        instructor.setName(instructor.getName());
-        instructorRepository.save(instructor);
+        Instructor instructor = instructorMapper.toModel(dto);
+        instructor.setSlots(new ArrayList<>());
+        instructor.setWeekends(new ArrayList<>());
+
+        Instructor savedInstructor = instructorRepository.save(instructor);
+
+        return instructorMapper.toResponseDto(savedInstructor);
     }
 
-    public void saveAllInstructors(List<Instructor> instructors) {
-        instructorRepository.saveAll(instructors);
+    public List<InstructorResponseDto> findAll() {
+        return instructorRepository.findAll()
+                .stream()
+                .map(instructorMapper::toResponseDto)
+                .toList();
     }
 
-    public Instructor findById(Long id) {
-        return instructorRepository.findById(id).orElseThrow(
+    public InstructorResponseDto findById(Long id) {
+        Instructor instructorFromRepo = instructorRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Can't find instructor by id: " + id)
         );
+
+        return instructorMapper.toResponseDto(instructorFromRepo);
     }
 
-    @Cacheable("instructorByName")
-    public Instructor findByName(String name) {
-        return instructorRepository.findByName(name).orElseThrow(
-                () -> new RuntimeException("Can't find instructor by name: " + name)
+    public InstructorDetailedResponseDto findDetailedById(Long id) {
+        Instructor instructorFromRepo = instructorRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Can't find instructor by id: " + id)
         );
+
+        return instructorMapper.toDetailedResponseDto(instructorFromRepo);
     }
 
-    @Cacheable("instructorNames")
-    public String[] getInstructorsNames() {
-        List<String> names = instructorRepository.findAllInstructorNames();
-        return names.toArray(new String[0]);
+    public void deleteById(Long id) {
+        Instructor instructorFromRepo = instructorRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Can't find instructor by id: " + id)
+        );
+
+        instructorRepository.delete(instructorFromRepo);
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "instructors", allEntries = true),
-            @CacheEvict(value = "instructorNames", allEntries = true),
-            @CacheEvict(value = "instructorByName", key = "#name")
-    })
-    @Transactional
-    public void deleteByName(String name) {
-        instructorRepository.deleteByName(name);
+    public InstructorResponseDto updateNameById(Long id, InstructorDto dto) {
+        Instructor instructorFromRepo = instructorRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Can't find instructor by id: " + id)
+        );
+
+        instructorFromRepo.setName(dto.getName());
+
+        Instructor updatedInstructor = instructorRepository.save(instructorFromRepo);
+
+        return instructorMapper.toResponseDto(updatedInstructor);
     }
 }
