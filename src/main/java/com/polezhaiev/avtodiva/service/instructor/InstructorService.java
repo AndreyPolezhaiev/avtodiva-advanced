@@ -1,7 +1,7 @@
 package com.polezhaiev.avtodiva.service.instructor;
 
+import com.polezhaiev.avtodiva.dto.instructor.CreateInstructorRequestDto;
 import com.polezhaiev.avtodiva.dto.instructor.InstructorDetailedResponseDto;
-import com.polezhaiev.avtodiva.dto.instructor.InstructorDto;
 import com.polezhaiev.avtodiva.dto.instructor.InstructorResponseDto;
 import com.polezhaiev.avtodiva.mapper.InstructorMapper;
 import com.polezhaiev.avtodiva.model.Instructor;
@@ -17,12 +17,12 @@ public class InstructorService {
     private final InstructorRepository instructorRepository;
     private final InstructorMapper instructorMapper;
 
-    public InstructorResponseDto save(InstructorDto dto) {
-        if (instructorRepository.existsByNameIgnoreCase(dto.getName())) {
-            throw new IllegalStateException("Instructor with name '" + dto.getName() + "' already exists!");
+    public InstructorResponseDto save(CreateInstructorRequestDto requestDto) {
+        if (instructorRepository.existsByNameIgnoreCase(requestDto.getName())) {
+            throw new IllegalStateException("Instructor with name '" + requestDto.getName() + "' already exists!");
         }
 
-        Instructor instructor = instructorMapper.toModel(dto);
+        Instructor instructor = instructorMapper.toModel(requestDto);
         instructor.setSlots(new ArrayList<>());
         instructor.setWeekends(new ArrayList<>());
 
@@ -62,12 +62,12 @@ public class InstructorService {
         instructorRepository.delete(instructorFromRepo);
     }
 
-    public InstructorResponseDto updateNameById(Long id, InstructorDto dto) {
+    public InstructorResponseDto updateNameById(Long id, CreateInstructorRequestDto requestDto) {
         Instructor instructorFromRepo = instructorRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Can't find instructor by id: " + id)
         );
 
-        instructorFromRepo.setName(dto.getName());
+        instructorFromRepo.setName(requestDto.getName());
 
         Instructor updatedInstructor = instructorRepository.save(instructorFromRepo);
 

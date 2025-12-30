@@ -2,7 +2,6 @@ package com.polezhaiev.avtodiva.mapper;
 
 import com.polezhaiev.avtodiva.config.MapperConfig;
 import com.polezhaiev.avtodiva.dto.weekend.CreateWeekendRequestDto;
-import com.polezhaiev.avtodiva.dto.weekend.WeekendDto;
 import com.polezhaiev.avtodiva.dto.weekend.WeekendResponseDto;
 import com.polezhaiev.avtodiva.model.Weekend;
 import org.mapstruct.Mapper;
@@ -16,7 +15,4 @@ public interface WeekendMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "instructor", ignore = true)
     Weekend toModel(CreateWeekendRequestDto requestDto);
-
-    @Mapping(target = "instructorId", source = "instructor.id")
-    WeekendDto toDto(Weekend weekend);
 }

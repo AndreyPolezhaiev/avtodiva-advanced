@@ -1,14 +1,14 @@
 package com.polezhaiev.avtodiva.service.student;
 
 import com.polezhaiev.avtodiva.repository.ScheduleSlotRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class StudentService {
     private final ScheduleSlotRepository scheduleSlotRepository;
 

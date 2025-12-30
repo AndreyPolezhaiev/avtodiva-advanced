@@ -9,12 +9,13 @@ import com.polezhaiev.avtodiva.model.Weekend;
 import com.polezhaiev.avtodiva.repository.InstructorRepository;
 import com.polezhaiev.avtodiva.repository.WeekendRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WeekendService {
     private final WeekendRepository weekendRepository;
     private final InstructorRepository instructorRepository;

@@ -1,6 +1,5 @@
 package com.polezhaiev.avtodiva.service.car;
 
-import com.polezhaiev.avtodiva.dto.car.CarDto;
 import com.polezhaiev.avtodiva.dto.car.CarResponseDto;
 import com.polezhaiev.avtodiva.dto.car.CreateCarRequestDto;
 import com.polezhaiev.avtodiva.mapper.CarMapper;

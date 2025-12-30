@@ -2,7 +2,6 @@ package com.polezhaiev.avtodiva.controller;
 
 import com.polezhaiev.avtodiva.dto.instructor.CreateInstructorRequestDto;
 import com.polezhaiev.avtodiva.dto.instructor.InstructorDetailedResponseDto;
-import com.polezhaiev.avtodiva.dto.instructor.InstructorDto;
 import com.polezhaiev.avtodiva.dto.instructor.InstructorResponseDto;
 import com.polezhaiev.avtodiva.mapper.InstructorMapper;
 import com.polezhaiev.avtodiva.service.instructor.InstructorService;
@@ -24,8 +23,7 @@ public class InstructorController {
     @PostMapping
     public ResponseEntity<InstructorResponseDto> createInstructor(
             @RequestBody @Valid CreateInstructorRequestDto requestDto) {
-        InstructorDto dto = instructorMapper.toDto(requestDto);
-        InstructorResponseDto instructorResponseDto = instructorService.save(dto);
+        InstructorResponseDto instructorResponseDto = instructorService.save(requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(instructorResponseDto);
     }
@@ -61,8 +59,7 @@ public class InstructorController {
     @PutMapping("/{id}/name")
     public ResponseEntity<InstructorResponseDto> updateInstructorNameById(@PathVariable Long id,
                                                         @RequestBody @Valid CreateInstructorRequestDto requestDto) {
-        InstructorDto instructorDto = instructorMapper.toDto(requestDto);
-        InstructorResponseDto instructorResponseDto = instructorService.updateNameById(id, instructorDto);
+        InstructorResponseDto instructorResponseDto = instructorService.updateNameById(id, requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(instructorResponseDto);
     }
