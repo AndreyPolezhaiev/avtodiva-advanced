@@ -8,7 +8,7 @@ import com.polezhaiev.avtodiva.dto.instructor.InstructorResponseDto;
 import com.polezhaiev.avtodiva.model.Instructor;
 import org.mapstruct.Mapper;
 
-@Mapper(config = MapperConfig.class)
+@Mapper(config = MapperConfig.class, uses = WeekendMapper.class)
 public interface InstructorMapper {
     InstructorResponseDto toResponseDto(Instructor instructor);
     InstructorDetailedResponseDto toDetailedResponseDto(Instructor instructor);

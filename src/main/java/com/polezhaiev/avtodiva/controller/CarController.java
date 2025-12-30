@@ -1,6 +1,5 @@
 package com.polezhaiev.avtodiva.controller;
 
-import com.polezhaiev.avtodiva.dto.car.CarDto;
 import com.polezhaiev.avtodiva.dto.car.CarResponseDto;
 import com.polezhaiev.avtodiva.dto.car.CreateCarRequestDto;
 import com.polezhaiev.avtodiva.mapper.CarMapper;
@@ -22,8 +21,7 @@ public class CarController {
 
     @PostMapping
     public ResponseEntity<CarResponseDto> createCar(@RequestBody @Valid CreateCarRequestDto requestDto) {
-        CarDto carDto = carMapper.toDto(requestDto);
-        CarResponseDto carResponseDto = carService.save(carDto);
+        CarResponseDto carResponseDto = carService.save(requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(carResponseDto);
     }
@@ -52,8 +50,7 @@ public class CarController {
     @PutMapping("/{id}")
     public ResponseEntity<CarResponseDto> updateCarById(@PathVariable Long id,
                                                         @RequestBody @Valid CreateCarRequestDto requestDto) {
-        CarDto carDto = carMapper.toDto(requestDto);
-        CarResponseDto carResponseDto = carService.updateById(id, carDto);
+        CarResponseDto carResponseDto = carService.updateById(id, requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(carResponseDto);
     }

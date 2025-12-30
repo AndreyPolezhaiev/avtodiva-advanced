@@ -26,7 +26,7 @@ public class Instructor {
             mappedBy = "instructor",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
     @ToString.Exclude
     private List<Weekend> weekends;

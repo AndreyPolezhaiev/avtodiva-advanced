@@ -1,7 +1,6 @@
 package com.polezhaiev.avtodiva.dto.instructor;
 
-import com.polezhaiev.avtodiva.model.ScheduleSlot;
-import com.polezhaiev.avtodiva.model.Weekend;
+import com.polezhaiev.avtodiva.dto.weekend.WeekendResponseDto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -12,8 +11,7 @@ import java.util.List;
 public class InstructorDetailedResponseDto {
     private Long id;
     private String name;
-
+    private List<WeekendResponseDto> weekends;
     // TO.DO
-//    private List<WeekendResponseDto> weekends;
 //    private List<ScheduleSlotResponseDto> slots;
 }
