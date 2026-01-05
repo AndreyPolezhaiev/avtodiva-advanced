@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static com.polezhaiev.avtodiva.service.schedule.WorkingHoursProvider.getWorkingHours;
+import static com.polezhaiev.avtodiva.service.schedule.util.WorkingHoursProvider.getWorkingHours;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +63,7 @@ public class SlotGeneratorService {
 
     public void addFreeWindowsForCar(String carName, int days) {
         Car car = carRepository.findByName(carName)
-                .orElseThrow(() -> new RuntimeException("Car not found"));
+                .orElseThrow(() -> new RuntimeException("Car by name: " + carName + " not found"));
 
         List<Instructor> allInstructors = instructorRepository.findAll();
 
@@ -102,7 +102,7 @@ public class SlotGeneratorService {
 
     public void addFreeWindowsForInstructor(String instructorName, int days) {
         Instructor instructor = instructorRepository.findByName(instructorName)
-                .orElseThrow(() -> new RuntimeException("Instructor not found"));
+                .orElseThrow(() -> new RuntimeException("Instructor by name: " + instructorName + " not found"));
 
         List<Car> allCars = carRepository.findAll();
 

@@ -1,4 +1,4 @@
-package com.polezhaiev.avtodiva.service.schedule;
+package com.polezhaiev.avtodiva.service.schedule.util;
 
 import java.time.LocalDate;
 

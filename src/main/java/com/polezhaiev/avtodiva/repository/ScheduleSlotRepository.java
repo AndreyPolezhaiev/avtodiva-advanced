@@ -111,64 +111,37 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
     SELECT s FROM ScheduleSlot s
     JOIN FETCH s.instructor i
     JOIN FETCH s.car c
-    WHERE LOWER(i.name) = LOWER(:instructor)
-       AND LOWER(c.name) = LOWER(:car)
+    WHERE i.id = :instructorId
+       AND c.id = :carId
        AND s.date = :date
        AND s.timeFrom = :timeFrom
     """)
     Optional<ScheduleSlot> findByInstructorCarDateTime(
-            @Param("instructor") String instructor,
-            @Param("car") String car,
+            @Param("instructorId") Long instructorId,
+            @Param("carId") Long carId,
             @Param("date") LocalDate date,
             @Param("timeFrom") LocalTime timeFrom
     );
 
-    @Query("""
-    SELECT COUNT(s) > 0 FROM ScheduleSlot s
-    WHERE s.car = :car
-      AND s.date = :date
-      AND s.booked = true
-      AND s.timeFrom < :timeTo
-      AND s.timeTo > :timeFrom
-      AND (:excludeId IS NULL OR s.id <> :excludeId)
-    """)
-    boolean existsBookedCarConflictExcluding(
-            @Param("car") Car car,
-            @Param("date") LocalDate date,
-            @Param("timeFrom") LocalTime timeFrom,
-            @Param("timeTo") LocalTime timeTo,
-            @Param("excludeId") Long excludeId
+    boolean existsByInstructorIdAndCarIdAndDateAndTimeFrom(
+            Long instructorId,
+            Long carId,
+            LocalDate date,
+            LocalTime timeFrom
     );
 
     @Query("""
     SELECT COUNT(s) > 0 FROM ScheduleSlot s
-    WHERE s.instructor = :instructor
+    WHERE (s.car.id = :carId OR s.instructor.id = :instructorId)
       AND s.date = :date
       AND s.booked = true
       AND s.timeFrom < :timeTo
       AND s.timeTo > :timeFrom
-      AND (:excludeId IS NULL OR s.id <> :excludeId)
-    """)
-    boolean existsBookedInstructorConflictExcluding(
-            @Param("instructor") Instructor instructor,
-            @Param("date") LocalDate date,
-            @Param("timeFrom") LocalTime timeFrom,
-            @Param("timeTo") LocalTime timeTo,
-            @Param("excludeId") Long excludeId
-    );
-
-    @Query("""
-    SELECT COUNT(s) > 0 FROM ScheduleSlot s
-    WHERE s.date = :date
-      AND s.booked = true
-      AND s.timeFrom < :timeTo
-      AND s.timeTo > :timeFrom
-      AND (s.car = :car OR s.instructor = :instructor)
       AND (:excludeId IS NULL OR s.id <> :excludeId)
     """)
     boolean existsBookedInstructorAndCarConflictExcluding(
-            @Param("instructor") Instructor instructor,
-            @Param("car") Car car,
+            @Param("instructorId") Long instructorId,
+            @Param("carId") Long carId,
             @Param("date") LocalDate date,
             @Param("timeFrom") LocalTime timeFrom,
             @Param("timeTo") LocalTime timeTo,
@@ -177,59 +150,14 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
 
     @Query("""
     SELECT COUNT(s) > 0 FROM ScheduleSlot s
-    WHERE s.car = :car
-      AND s.date = :date
-      AND s.booked = true
-      AND s.timeFrom < :timeTo
-      AND s.timeTo > :timeFrom
-    """)
-    boolean existsBookedCarConflict(
-            @Param("car") Car car,
-            @Param("date") LocalDate date,
-            @Param("timeFrom") LocalTime timeFrom,
-            @Param("timeTo") LocalTime timeTo
-    );
-
-    @Query("""
-    SELECT COUNT(s) > 0 FROM ScheduleSlot s
-    WHERE s.instructor = :instructor
-      AND s.date = :date
-      AND s.booked = true
-      AND s.timeFrom < :timeTo
-      AND s.timeTo > :timeFrom
-    """)
-    boolean existsBookedInstructorConflict(
-            @Param("instructor") Instructor instructor,
-            @Param("date") LocalDate date,
-            @Param("timeFrom") LocalTime timeFrom,
-            @Param("timeTo") LocalTime timeTo
-    );
-
-    @Query("""
-    SELECT COUNT(s) > 0 FROM ScheduleSlot s
     WHERE s.date = :date
       AND s.booked = true
-      AND s.timeFrom < :timeTo
-      AND s.timeTo > :timeFrom
-      AND (s.car = :car OR s.instructor = :instructor)
+      AND (s.timeFrom < :timeTo AND s.timeTo > :timeFrom)
+      AND (s.car.id = :carId OR s.instructor.id = :instructorId)
     """)
     boolean existsBookedInstructorAndCarConflict(
-            @Param("instructor") Instructor instructor,
-            @Param("car") Car car,
-            @Param("date") LocalDate date,
-            @Param("timeFrom") LocalTime timeFrom,
-            @Param("timeTo") LocalTime timeTo
-    );
-
-    @Query("""
-    SELECT COUNT(w) > 0 FROM Weekend w
-    WHERE w.instructor = :instructor
-      AND w.day = :date
-      AND w.timeFrom < :timeTo
-      AND w.timeTo > :timeFrom
-    """)
-    boolean existsWeekendConflict(
-            @Param("instructor") Instructor instructor,
+            @Param("instructorId") Long instructorId,
+            @Param("carId") Long carId,
             @Param("date") LocalDate date,
             @Param("timeFrom") LocalTime timeFrom,
             @Param("timeTo") LocalTime timeTo
@@ -323,5 +251,24 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
        """)
     List<ScheduleSlot> findAllFreeSlotsByInstructorName(
             @Param("instructor") String instructor
+    );
+
+    @Query("""
+    SELECT s FROM ScheduleSlot s
+    WHERE (:instructorIds IS NULL OR s.instructor.id IN :instructorIds)
+      AND (:carIds IS NULL OR s.car.id IN :carIds)
+      AND (:studentId IS NULL OR s.student.id = :studentId)
+      AND (:from IS NULL OR s.date >= :from)
+      AND (:to IS NULL OR s.date <= :to)
+      AND (:booked IS NULL OR s.booked = :booked)
+    ORDER BY s.date ASC, s.timeFrom ASC
+    """)
+    List<ScheduleSlot> findWithFilter(
+            @Param("instructorIds") List<Long> instructorIds,
+            @Param("carIds") List<Long> carIds,
+            @Param("studentId") Long studentId,
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to,
+            @Param("booked") Boolean booked
     );
 }
