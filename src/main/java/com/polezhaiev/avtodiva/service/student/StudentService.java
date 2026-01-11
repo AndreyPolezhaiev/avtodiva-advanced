@@ -17,18 +17,17 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class StudentService {
-    private final ScheduleSlotRepository scheduleSlotRepository;
     private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
 
-    public StudentResponseDto save(CreateStudentRequestDto requestDto, List<ScheduleSlot> scheduleSlots) {
+    public StudentResponseDto save(CreateStudentRequestDto requestDto) {
         if (studentRepository.existsByNameIgnoreCase(requestDto.getName())) {
             throw new IllegalStateException("Student with name '" + requestDto.getName() + "' already exists!");
         }
 
         Student student = studentMapper.toModel(requestDto);
         student.setName(requestDto.getName());
-        student.setScheduleSlots(scheduleSlots);
+        student.setScheduleSlots(List.of());
 
         Student saved = studentRepository.save(student);
         
@@ -68,9 +67,5 @@ public class StudentService {
 
         Student saved = studentRepository.save(studentFromRepo);
         return studentMapper.toResponseDto(saved);
-    }
-
-    public List<String> getStudentsNames() {
-        return scheduleSlotRepository.findDistinctStudentNames();
     }
 }

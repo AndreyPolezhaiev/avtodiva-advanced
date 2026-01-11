@@ -1,7 +1,7 @@
 package com.polezhaiev.avtodiva.controller;
 
 import com.polezhaiev.avtodiva.dto.schedule.CreateScheduleSlotRequestDto;
-import com.polezhaiev.avtodiva.dto.schedule.ScheduleFilterRequestDto;
+import com.polezhaiev.avtodiva.dto.schedule.SlotSearchParametersDto;
 import com.polezhaiev.avtodiva.dto.schedule.ScheduleSlotResponseDto;
 import com.polezhaiev.avtodiva.service.schedule.ScheduleSlotService;
 import jakarta.validation.Valid;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/schedule")
@@ -26,7 +27,7 @@ public class ScheduleSlotController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ScheduleSlotResponseDto>> searchSlots(@Valid ScheduleFilterRequestDto requestDto) {
+    public ResponseEntity<List<ScheduleSlotResponseDto>> searchSlots(@Valid SlotSearchParametersDto requestDto) {
         List<ScheduleSlotResponseDto> response = scheduleSlotService.searchSlots(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

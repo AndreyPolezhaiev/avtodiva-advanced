@@ -6,11 +6,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-public class ScheduleFilterRequestDto {
+public class SlotSearchParametersDto {
     private List<Long> instructorIds;
     private List<Long> carIds;
     private Long studentId;
-    private LocalDate from;
-    private LocalDate to;
+    private LocalDate dateFrom;
+    private LocalDate dateTo;
     private Boolean booked;
 }

@@ -2,6 +2,7 @@ package com.polezhaiev.avtodiva.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -12,9 +13,8 @@ public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
+    @ToString.Exclude
     @OneToMany(
             mappedBy = "car",
             cascade = CascadeType.ALL,

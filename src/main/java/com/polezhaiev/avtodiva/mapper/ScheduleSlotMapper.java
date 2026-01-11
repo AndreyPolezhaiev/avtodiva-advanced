@@ -5,9 +5,13 @@ import com.polezhaiev.avtodiva.dto.schedule.CreateScheduleSlotRequestDto;
 import com.polezhaiev.avtodiva.dto.schedule.ScheduleSlotResponseDto;
 import com.polezhaiev.avtodiva.model.ScheduleSlot;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(config = MapperConfig.class, uses = {CarMapper.class, InstructorMapper.class, StudentMapper.class})
 public interface ScheduleSlotMapper {
     ScheduleSlot toModel(CreateScheduleSlotRequestDto requestDto);
+    @Mapping(target = "instructorDto", source = "instructor")
+    @Mapping(target = "carDto", source = "car")
+    @Mapping(target = "studentDto", source = "student")
     ScheduleSlotResponseDto toResponseDto(ScheduleSlot scheduleSlot);
 }

@@ -2,6 +2,7 @@ package com.polezhaiev.avtodiva.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -22,10 +23,13 @@ public class ScheduleSlot {
     private LocalDate date;
     private LocalTime timeFrom;
     private LocalTime timeTo;
+    @ToString.Exclude
     @ManyToOne
     private Instructor instructor;
+    @ToString.Exclude
     @ManyToOne
     private Car car;
+    @ToString.Exclude
     @ManyToOne
     private Student student;
     private String description;
