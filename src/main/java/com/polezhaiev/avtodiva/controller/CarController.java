@@ -40,18 +40,18 @@ public class CarController {
         return ResponseEntity.status(HttpStatus.OK).body(carById);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCarById(@PathVariable Long id) {
-        carService.deleteById(id);
-        String response = "Car by id " + id + " was successfully removed";
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<CarResponseDto> updateCarById(@PathVariable Long id,
                                                         @RequestBody @Valid CreateCarRequestDto requestDto) {
         CarResponseDto carResponseDto = carService.updateById(id, requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(carResponseDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCarById(@PathVariable Long id) {
+        carService.deleteById(id);
+        String response = "Car by id " + id + " was successfully removed";
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

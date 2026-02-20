@@ -7,9 +7,9 @@ import com.polezhaiev.avtodiva.model.Weekend;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(config = MapperConfig.class)
+@Mapper(config = MapperConfig.class, uses = {InstructorMapper.class})
 public interface WeekendMapper {
-    @Mapping(target = "instructorId", source = "instructor.id")
+    @Mapping(target = "instructorDto", source = "instructor")
     WeekendResponseDto toResponseDto(Weekend weekend);
 
     @Mapping(target = "id", ignore = true)

@@ -1,5 +1,6 @@
 package com.polezhaiev.avtodiva.dto.weekend;
 
+import com.polezhaiev.avtodiva.dto.instructor.InstructorResponseDto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,5 +14,5 @@ public class WeekendResponseDto {
     private LocalDate day;
     private LocalTime timeFrom;
     private LocalTime timeTo;
-    private Long instructorId;
+    private InstructorResponseDto instructorDto;
 }

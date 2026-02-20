@@ -1,5 +1,6 @@
 package com.polezhaiev.avtodiva.dto.weekend;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -20,4 +21,12 @@ public class UpdateWeekendRequestDto {
 
     @NotNull(message = "Time to can't be null")
     private LocalTime timeTo;
+
+    @AssertTrue(message = "Time to must be after time from")
+    public boolean isTimeRangeValid() {
+        if (timeFrom == null || timeTo == null) {
+            return true;
+        }
+        return timeTo.isAfter(timeFrom);
+    }
 }

@@ -42,18 +42,18 @@ public class WeekendController {
         return ResponseEntity.status(HttpStatus.OK).body(weekendById);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<WeekendResponseDto> updateWeekendById(@PathVariable Long id,
+                                                                @RequestBody @Valid UpdateWeekendRequestDto requestDto) {
+        WeekendResponseDto weekendResponseDto = weekendService.updateById(id, requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(weekendResponseDto);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteWeekendById(@PathVariable Long id) {
         weekendService.deleteById(id);
         String response = "Weekend by id " + id + " was successfully removed";
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<WeekendResponseDto> updateWeekendById(@PathVariable Long id,
-                                                        @RequestBody @Valid UpdateWeekendRequestDto requestDto) {
-        WeekendResponseDto weekendResponseDto = weekendService.updateById(id, requestDto);
-
-        return ResponseEntity.status(HttpStatus.OK).body(weekendResponseDto);
     }
 }

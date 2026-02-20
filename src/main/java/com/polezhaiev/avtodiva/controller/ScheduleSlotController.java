@@ -40,18 +40,18 @@ public class ScheduleSlotController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ScheduleSlotResponseDto> updateSlotById(@PathVariable Long id,
+                                                                  @RequestBody @Valid CreateScheduleSlotRequestDto requestDto) {
+        ScheduleSlotResponseDto response = scheduleSlotService.updateById(id, requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteSlotById(@PathVariable Long id) {
         scheduleSlotService.deleteById(id);
         String response = "Slot by id " + id + " was successfully removed";
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ScheduleSlotResponseDto> updateSlotById(@PathVariable Long id,
-                                                        @RequestBody @Valid CreateScheduleSlotRequestDto requestDto) {
-        ScheduleSlotResponseDto response = scheduleSlotService.updateById(id, requestDto);
-
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

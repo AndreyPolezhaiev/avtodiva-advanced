@@ -40,18 +40,18 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.OK).body(studentById);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<StudentResponseDto> updateStudentById(@PathVariable Long id,
+                                                                @RequestBody @Valid UpdateStudentRequestDto requestDto) {
+        StudentResponseDto studentResponseDto = studentService.updateById(id, requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(studentResponseDto);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteStudentById(@PathVariable Long id) {
         studentService.deleteById(id);
         String response = "Student by id " + id + " was successfully removed";
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<StudentResponseDto> updateStudentById(@PathVariable Long id,
-                                                        @RequestBody @Valid UpdateStudentRequestDto requestDto) {
-        StudentResponseDto studentResponseDto = studentService.updateById(id, requestDto);
-
-        return ResponseEntity.status(HttpStatus.OK).body(studentResponseDto);
     }
 }
