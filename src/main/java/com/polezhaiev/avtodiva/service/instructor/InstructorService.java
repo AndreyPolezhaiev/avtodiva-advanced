@@ -4,6 +4,7 @@ import com.polezhaiev.avtodiva.dto.instructor.CreateInstructorRequestDto;
 import com.polezhaiev.avtodiva.dto.instructor.InstructorDetailedResponseDto;
 import com.polezhaiev.avtodiva.dto.instructor.InstructorResponseDto;
 import com.polezhaiev.avtodiva.mapper.InstructorMapper;
+import com.polezhaiev.avtodiva.mapper.ScheduleSlotMapper;
 import com.polezhaiev.avtodiva.model.Instructor;
 import com.polezhaiev.avtodiva.repository.InstructorRepository;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 public class InstructorService {
     private final InstructorRepository instructorRepository;
     private final InstructorMapper instructorMapper;
+    private final ScheduleSlotMapper scheduleSlotMapper;
 
     public InstructorResponseDto save(CreateInstructorRequestDto requestDto) {
         if (instructorRepository.existsByNameIgnoreCase(requestDto.getName())) {
@@ -51,7 +53,14 @@ public class InstructorService {
                 () -> new RuntimeException("Can't find instructor by id: " + id)
         );
 
-        return instructorMapper.toDetailedResponseDto(instructorFromRepo);
+        InstructorDetailedResponseDto detailedResponseDto
+                = instructorMapper.toDetailedResponseDto(instructorFromRepo);
+
+        detailedResponseDto.setSlots(instructorFromRepo.getSlots().stream()
+                .map(scheduleSlotMapper::toResponseDto)
+                .toList());
+
+        return detailedResponseDto;
     }
 
     public void deleteById(Long id) {

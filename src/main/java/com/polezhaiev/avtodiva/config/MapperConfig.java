@@ -5,7 +5,7 @@ import org.mapstruct.NullValueCheckStrategy;
 
 @org.mapstruct.MapperConfig(
         componentModel = "spring",
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+        injectionStrategy = InjectionStrategy.FIELD,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         implementationPackage = "<PACKAGE_NAME>.impl"
 )
