@@ -49,9 +49,8 @@ public class CarController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCarById(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCarById(@PathVariable Long id) {
         carService.deleteById(id);
-        String response = "Car by id " + id + " was successfully removed";
-        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

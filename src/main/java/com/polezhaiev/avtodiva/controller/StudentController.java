@@ -49,9 +49,8 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteStudentById(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteStudentById(@PathVariable Long id) {
         studentService.deleteById(id);
-        String response = "Student by id " + id + " was successfully removed";
-        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

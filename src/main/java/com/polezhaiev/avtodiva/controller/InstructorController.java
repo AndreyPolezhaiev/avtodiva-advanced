@@ -50,18 +50,17 @@ public class InstructorController {
         return ResponseEntity.status(HttpStatus.OK).body(instructorById);
     }
 
-    @PutMapping("/{id}/name")
-    public ResponseEntity<InstructorResponseDto> updateInstructorNameById(@PathVariable Long id,
+    @PutMapping("/{id}")
+    public ResponseEntity<InstructorResponseDto> updateInstructorById(@PathVariable Long id,
                                                                           @RequestBody @Valid CreateInstructorRequestDto requestDto) {
-        InstructorResponseDto instructorResponseDto = instructorService.updateNameById(id, requestDto);
+        InstructorResponseDto instructorResponseDto = instructorService.updateById(id, requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(instructorResponseDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCarById(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteInstructorById(@PathVariable Long id) {
         instructorService.deleteById(id);
-        String response = "Instructor by id " + id + " was successfully removed";
-        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

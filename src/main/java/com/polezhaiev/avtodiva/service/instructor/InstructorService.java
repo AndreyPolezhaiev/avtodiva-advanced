@@ -71,7 +71,7 @@ public class InstructorService {
         instructorRepository.delete(instructorFromRepo);
     }
 
-    public InstructorResponseDto updateNameById(Long id, CreateInstructorRequestDto requestDto) {
+    public InstructorResponseDto updateById(Long id, CreateInstructorRequestDto requestDto) {
         Instructor instructorFromRepo = instructorRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Can't find instructor by id: " + id)
         );

@@ -3,6 +3,7 @@ package com.polezhaiev.avtodiva.service.schedule;
 import com.polezhaiev.avtodiva.dto.schedule.CreateScheduleSlotRequestDto;
 import com.polezhaiev.avtodiva.dto.schedule.SlotSearchParametersDto;
 import com.polezhaiev.avtodiva.dto.schedule.ScheduleSlotResponseDto;
+import com.polezhaiev.avtodiva.dto.schedule.UpdateScheduleSlotRequestDto;
 import com.polezhaiev.avtodiva.mapper.ScheduleSlotMapper;
 import com.polezhaiev.avtodiva.model.Car;
 import com.polezhaiev.avtodiva.model.Instructor;
@@ -50,7 +51,9 @@ public class ScheduleSlotService {
         newSlot.setBooked(true);
         ScheduleSlot saved = scheduleSlotRepository.save(newSlot);
 
-        return scheduleSlotMapper.toResponseDto(saved);
+        ScheduleSlotResponseDto responseDto = scheduleSlotMapper.toResponseDto(saved);
+        responseDto.setBooked(saved.isBooked());
+        return responseDto;
     }
 
     public List<ScheduleSlotResponseDto> searchSlots(SlotSearchParametersDto searchParameters) {
@@ -82,15 +85,21 @@ public class ScheduleSlotService {
         scheduleSlotFromRepo.setStudent(null);
         scheduleSlotFromRepo.setDescription(null);
         scheduleSlotFromRepo.setLink(null);
+        scheduleSlotFromRepo.setBooked(false);
 
         scheduleSlotRepository.save(scheduleSlotFromRepo);
     }
 
     @Transactional
-    public ScheduleSlotResponseDto updateById(Long id, CreateScheduleSlotRequestDto requestDto) {
+    public ScheduleSlotResponseDto updateById(Long id, UpdateScheduleSlotRequestDto requestDto) {
         ScheduleSlot existing = scheduleSlotRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("Can't find slot by id: " + id)
         );
+
+        if (requestDto.isBooked()) {
+            scheduleValidatorService.checkScheduleConflictsExcluding(requestDto, existing.getId());
+        }
+
         Student student = studentRepository.findById(requestDto.getStudentId()).orElseThrow(
                 () -> new RuntimeException("Can't find student by id: " + requestDto.getStudentId())
         );
@@ -109,9 +118,7 @@ public class ScheduleSlotService {
         existing.setTimeFrom(requestDto.getTimeFrom());
         existing.setTimeTo(requestDto.getTimeTo());
         existing.setDate(requestDto.getDate());
-        existing.setBooked(true);
-
-        scheduleValidatorService.checkScheduleConflictsExcluding(requestDto, existing.getId());
+        existing.setBooked(requestDto.isBooked());
 
         ScheduleSlot saved = scheduleSlotRepository.save(existing);
 

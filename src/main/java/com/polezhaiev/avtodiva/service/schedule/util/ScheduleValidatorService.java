@@ -1,6 +1,7 @@
 package com.polezhaiev.avtodiva.service.schedule.util;
 
 import com.polezhaiev.avtodiva.dto.schedule.CreateScheduleSlotRequestDto;
+import com.polezhaiev.avtodiva.dto.schedule.UpdateScheduleSlotRequestDto;
 import com.polezhaiev.avtodiva.model.ScheduleSlot;
 import com.polezhaiev.avtodiva.repository.ScheduleSlotRepository;
 import com.polezhaiev.avtodiva.repository.WeekendRepository;
@@ -34,7 +35,7 @@ public class ScheduleValidatorService {
         }
     }
 
-    public void checkScheduleConflictsExcluding(CreateScheduleSlotRequestDto requestDto, Long excludedSlotId) {
+    public void checkScheduleConflictsExcluding(UpdateScheduleSlotRequestDto requestDto, Long excludedSlotId) {
         if (weekendRepository.existsWeekendConflict(
                 requestDto.getInstructorId(),
                 requestDto.getDate(),

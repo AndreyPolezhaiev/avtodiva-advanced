@@ -3,6 +3,7 @@ package com.polezhaiev.avtodiva.controller;
 import com.polezhaiev.avtodiva.dto.schedule.CreateScheduleSlotRequestDto;
 import com.polezhaiev.avtodiva.dto.schedule.SlotSearchParametersDto;
 import com.polezhaiev.avtodiva.dto.schedule.ScheduleSlotResponseDto;
+import com.polezhaiev.avtodiva.dto.schedule.UpdateScheduleSlotRequestDto;
 import com.polezhaiev.avtodiva.service.schedule.ScheduleSlotService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,16 +43,15 @@ public class ScheduleSlotController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleSlotResponseDto> updateSlotById(@PathVariable Long id,
-                                                                  @RequestBody @Valid CreateScheduleSlotRequestDto requestDto) {
+                                                                  @RequestBody @Valid UpdateScheduleSlotRequestDto requestDto) {
         ScheduleSlotResponseDto response = scheduleSlotService.updateById(id, requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteSlotById(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteSlotById(@PathVariable Long id) {
         scheduleSlotService.deleteById(id);
-        String response = "Slot by id " + id + " was successfully removed";
-        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
