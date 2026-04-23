@@ -2,6 +2,7 @@ package com.polezhaiev.avtodiva.controller;
 
 import com.polezhaiev.avtodiva.dto.student.CreateStudentRequestDto;
 import com.polezhaiev.avtodiva.dto.student.StudentResponseDto;
+import com.polezhaiev.avtodiva.dto.student.StudentSearchParametersDto;
 import com.polezhaiev.avtodiva.dto.student.UpdateStudentRequestDto;
 import com.polezhaiev.avtodiva.service.student.StudentService;
 import jakarta.validation.Valid;
@@ -31,6 +32,13 @@ public class StudentController {
         List<StudentResponseDto> allStudents = studentService.findAll();
 
         return ResponseEntity.status(HttpStatus.OK).body(allStudents);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<StudentResponseDto>> searchStudents(StudentSearchParametersDto searchParameters) {
+        List<StudentResponseDto> response = studentService.searchStudents(searchParameters);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")

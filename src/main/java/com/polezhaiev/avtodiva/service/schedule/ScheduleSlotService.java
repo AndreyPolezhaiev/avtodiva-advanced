@@ -58,6 +58,7 @@ public class ScheduleSlotService {
 
     public List<ScheduleSlotResponseDto> searchSlots(SlotSearchParametersDto searchParameters) {
         Specification<ScheduleSlot> slotSpecification = specificationBuilder.build(searchParameters);
+
         return scheduleSlotRepository.findAll(slotSpecification)
                 .stream()
                 .map(scheduleSlotMapper::toResponseDto)

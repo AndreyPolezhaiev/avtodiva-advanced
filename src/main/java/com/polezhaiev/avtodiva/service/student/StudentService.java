@@ -2,11 +2,15 @@ package com.polezhaiev.avtodiva.service.student;
 
 import com.polezhaiev.avtodiva.dto.student.CreateStudentRequestDto;
 import com.polezhaiev.avtodiva.dto.student.StudentResponseDto;
+import com.polezhaiev.avtodiva.dto.student.StudentSearchParametersDto;
 import com.polezhaiev.avtodiva.dto.student.UpdateStudentRequestDto;
 import com.polezhaiev.avtodiva.mapper.StudentMapper;
 import com.polezhaiev.avtodiva.model.Student;
 import com.polezhaiev.avtodiva.repository.StudentRepository;
+import com.polezhaiev.avtodiva.repository.spec.SpecificationBuilder;
+import com.polezhaiev.avtodiva.repository.spec.impl.StudentSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +21,7 @@ import java.util.List;
 public class StudentService {
     private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
+    private final StudentSpecificationBuilder specificationBuilder;
 
     public StudentResponseDto save(CreateStudentRequestDto requestDto) {
         String cleanPhone = requestDto.getPhoneNumber().replaceAll("\\D", "");
@@ -40,6 +45,15 @@ public class StudentService {
 
     public List<StudentResponseDto> findAll() {
         return studentRepository.findAll()
+                .stream()
+                .map(studentMapper::toResponseDto)
+                .toList();
+    }
+
+    public List<StudentResponseDto> searchStudents(StudentSearchParametersDto searchParameters) {
+        Specification<Student> studentSpecification = specificationBuilder.build(searchParameters);
+
+        return studentRepository.findAll(studentSpecification)
                 .stream()
                 .map(studentMapper::toResponseDto)
                 .toList();
