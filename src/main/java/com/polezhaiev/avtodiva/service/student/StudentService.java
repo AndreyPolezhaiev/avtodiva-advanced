@@ -7,7 +7,6 @@ import com.polezhaiev.avtodiva.dto.student.UpdateStudentRequestDto;
 import com.polezhaiev.avtodiva.mapper.StudentMapper;
 import com.polezhaiev.avtodiva.model.Student;
 import com.polezhaiev.avtodiva.repository.StudentRepository;
-import com.polezhaiev.avtodiva.repository.spec.SpecificationBuilder;
 import com.polezhaiev.avtodiva.repository.spec.impl.StudentSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -65,13 +64,6 @@ public class StudentService {
         );
 
         return studentMapper.toResponseDto(studentFromRepo);
-    }
-
-    public List<StudentResponseDto> findAllByName(String name) {
-        return studentRepository.findByNameContainingIgnoreCase(name)
-                .stream()
-                .map(studentMapper::toResponseDto)
-                .toList();
     }
 
     public StudentResponseDto findByPhoneNumber(String phoneNumber) {
