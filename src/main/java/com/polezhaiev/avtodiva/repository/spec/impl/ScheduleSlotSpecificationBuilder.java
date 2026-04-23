@@ -1,6 +1,7 @@
 package com.polezhaiev.avtodiva.repository.spec.impl;
 
 import com.polezhaiev.avtodiva.dto.schedule.SlotSearchParametersDto;
+import com.polezhaiev.avtodiva.dto.student.StudentSearchParametersDto;
 import com.polezhaiev.avtodiva.model.ScheduleSlot;
 import com.polezhaiev.avtodiva.repository.spec.SpecificationBuilder;
 import com.polezhaiev.avtodiva.repository.spec.schedule.*;
@@ -8,7 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ScheduleSlotSpecificationBuilder implements SpecificationBuilder<ScheduleSlot> {
+public class ScheduleSlotSpecificationBuilder implements SpecificationBuilder<ScheduleSlot, SlotSearchParametersDto> {
     @Override
     public Specification<ScheduleSlot> build(SlotSearchParametersDto searchParameters) {
         Specification<ScheduleSlot> spec = Specification.allOf();

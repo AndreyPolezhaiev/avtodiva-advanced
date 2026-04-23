@@ -40,6 +40,18 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.OK).body(studentById);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<StudentResponseDto>> searchStudents(@RequestParam String name) {
+        List<StudentResponseDto> students = studentService.findAllByName(name);
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/byPhone")
+    public ResponseEntity<StudentResponseDto> findStudentByPhoneNumber(@RequestParam String phoneNumber) {
+        StudentResponseDto studentByPhoneNumber = studentService.findByPhoneNumber(phoneNumber);
+        return ResponseEntity.ok(studentByPhoneNumber);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<StudentResponseDto> updateStudentById(@PathVariable Long id,
                                                                 @RequestBody @Valid UpdateStudentRequestDto requestDto) {

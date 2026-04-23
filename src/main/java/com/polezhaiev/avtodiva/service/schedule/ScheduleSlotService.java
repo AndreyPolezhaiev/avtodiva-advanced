@@ -52,7 +52,7 @@ public class ScheduleSlotService {
         ScheduleSlot saved = scheduleSlotRepository.save(newSlot);
 
         ScheduleSlotResponseDto responseDto = scheduleSlotMapper.toResponseDto(saved);
-        responseDto.setBooked(saved.isBooked());
+        responseDto.setBooked(saved.getBooked());
         return responseDto;
     }
 
@@ -70,6 +70,12 @@ public class ScheduleSlotService {
         );
 
         return scheduleSlotMapper.toResponseDto(scheduleSlotFromRepo);
+    }
+
+    public ScheduleSlotResponseDto findLastBookedByStudentId(Long studentId) {
+        return scheduleSlotRepository.findLastBookedStudentSlot(studentId)
+                .map(scheduleSlotMapper::toResponseDto)
+                .orElse(null);
     }
 
     /**
@@ -96,13 +102,15 @@ public class ScheduleSlotService {
                 () -> new IllegalArgumentException("Can't find slot by id: " + id)
         );
 
-        if (requestDto.isBooked()) {
-            scheduleValidatorService.checkScheduleConflictsExcluding(requestDto, existing.getId());
+        scheduleValidatorService.checkScheduleConflictsExcluding(requestDto, existing.getId());
+
+        Student student = null;
+        if (requestDto.getStudentId() != null) {
+            student = studentRepository.findById(requestDto.getStudentId()).orElseThrow(
+                    () -> new RuntimeException("Can't find student by id: " + requestDto.getStudentId())
+            );
         }
 
-        Student student = studentRepository.findById(requestDto.getStudentId()).orElseThrow(
-                () -> new RuntimeException("Can't find student by id: " + requestDto.getStudentId())
-        );
         Instructor instructor = instructorRepository.findById(requestDto.getInstructorId()).orElseThrow(
                 () -> new RuntimeException("Can't find instructor by id: " + requestDto.getInstructorId())
         );
@@ -118,7 +126,7 @@ public class ScheduleSlotService {
         existing.setTimeFrom(requestDto.getTimeFrom());
         existing.setTimeTo(requestDto.getTimeTo());
         existing.setDate(requestDto.getDate());
-        existing.setBooked(requestDto.isBooked());
+        existing.setBooked(student != null);
 
         ScheduleSlot saved = scheduleSlotRepository.save(existing);
 

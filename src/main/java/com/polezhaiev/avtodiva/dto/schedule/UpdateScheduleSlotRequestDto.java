@@ -23,5 +23,4 @@ public class UpdateScheduleSlotRequestDto {
     private Long studentId;
     private String description;
     private String link;
-    private boolean booked;
 }

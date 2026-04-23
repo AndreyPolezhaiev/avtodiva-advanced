@@ -4,9 +4,7 @@ import com.polezhaiev.avtodiva.dto.student.CreateStudentRequestDto;
 import com.polezhaiev.avtodiva.dto.student.StudentResponseDto;
 import com.polezhaiev.avtodiva.dto.student.UpdateStudentRequestDto;
 import com.polezhaiev.avtodiva.mapper.StudentMapper;
-import com.polezhaiev.avtodiva.model.ScheduleSlot;
 import com.polezhaiev.avtodiva.model.Student;
-import com.polezhaiev.avtodiva.repository.ScheduleSlotRepository;
 import com.polezhaiev.avtodiva.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,12 +19,18 @@ public class StudentService {
     private final StudentMapper studentMapper;
 
     public StudentResponseDto save(CreateStudentRequestDto requestDto) {
-        if (studentRepository.existsByNameIgnoreCase(requestDto.getName())) {
-            throw new IllegalStateException("Student with name '" + requestDto.getName() + "' already exists!");
+        String cleanPhone = requestDto.getPhoneNumber().replaceAll("\\D", "");
+        requestDto.setPhoneNumber(cleanPhone);
+
+        if (studentRepository.existsByPhoneNumber(
+                requestDto.getPhoneNumber())
+        ) {
+            throw new IllegalStateException(
+                    "Student with phone number '" + requestDto.getPhoneNumber() + "' already exists!"
+            );
         }
 
         Student student = studentMapper.toModel(requestDto);
-        student.setName(requestDto.getName());
         student.setScheduleSlots(List.of());
 
         Student saved = studentRepository.save(student);
@@ -49,6 +53,19 @@ public class StudentService {
         return studentMapper.toResponseDto(studentFromRepo);
     }
 
+    public List<StudentResponseDto> findAllByName(String name) {
+        return studentRepository.findByNameContainingIgnoreCase(name)
+                .stream()
+                .map(studentMapper::toResponseDto)
+                .toList();
+    }
+
+    public StudentResponseDto findByPhoneNumber(String phoneNumber) {
+        return studentRepository.findByPhoneNumber(phoneNumber)
+                .map(studentMapper::toResponseDto)
+                .orElse(null);
+    }
+
     @Transactional
     public void deleteById(Long id) {
         Student studentFromRepo = studentRepository.findById(id).orElseThrow(
@@ -63,7 +80,23 @@ public class StudentService {
                 () -> new RuntimeException("Can't find student by id: " + id)
         );
 
+        String cleanPhone = requestDto.getPhoneNumber().replaceAll("\\D", "");
+        requestDto.setPhoneNumber(cleanPhone);
+
+        boolean isNameChanged = !studentFromRepo.getName().equalsIgnoreCase(requestDto.getName());
+        boolean isPhoneChanged = (studentFromRepo.getPhoneNumber() == null && requestDto.getPhoneNumber() != null) ||
+                (studentFromRepo.getPhoneNumber() != null && !studentFromRepo.getPhoneNumber().equals(requestDto.getPhoneNumber()));
+
+        if (isNameChanged || isPhoneChanged) {
+            if (studentRepository.existsByPhoneNumber(requestDto.getPhoneNumber())) {
+                throw new IllegalStateException(
+                        "Student with phone number: " + requestDto.getPhoneNumber() + " already exists!"
+                );
+            }
+        }
+
         studentFromRepo.setName(requestDto.getName());
+        studentFromRepo.setPhoneNumber(requestDto.getPhoneNumber());
 
         Student saved = studentRepository.save(studentFromRepo);
         return studentMapper.toResponseDto(saved);

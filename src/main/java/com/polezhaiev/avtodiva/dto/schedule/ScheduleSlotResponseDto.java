@@ -21,5 +21,5 @@ public class ScheduleSlotResponseDto {
     private StudentResponseDto studentDto;
     private String description;
     private String link;
-    private boolean booked;
+    private Boolean booked;
 }

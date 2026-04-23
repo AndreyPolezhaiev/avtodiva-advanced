@@ -9,4 +9,6 @@ import lombok.experimental.Accessors;
 public class UpdateStudentRequestDto {
     @NotBlank(message = "Student name can't be empty")
     private String name;
+    @NotBlank(message = "Student phone number can't be empty")
+    private String phoneNumber;
 }

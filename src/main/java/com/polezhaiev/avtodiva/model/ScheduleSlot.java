@@ -30,9 +30,9 @@ public class ScheduleSlot {
     @ManyToOne
     private Car car;
     @ToString.Exclude
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Student student;
     private String description;
     private String link;
-    private boolean booked;
+    private Boolean booked;
 }

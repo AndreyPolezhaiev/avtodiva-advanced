@@ -8,4 +8,5 @@ import lombok.experimental.Accessors;
 public class StudentResponseDto {
     private Long id;
     private String name;
+    private String phoneNumber;
 }

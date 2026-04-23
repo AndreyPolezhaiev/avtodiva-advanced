@@ -41,6 +41,13 @@ public class ScheduleSlotController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/last-booked")
+    public ResponseEntity<ScheduleSlotResponseDto> findLastBookedByStudentId(@RequestParam Long studentId) {
+        ScheduleSlotResponseDto response = scheduleSlotService.findLastBookedByStudentId(studentId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleSlotResponseDto> updateSlotById(@PathVariable Long id,
                                                                   @RequestBody @Valid UpdateScheduleSlotRequestDto requestDto) {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long>, JpaSpecificationExecutor<ScheduleSlot> {
@@ -101,4 +102,13 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
     List<ScheduleSlot> findAllFreeSlotsByInstructorName(
             @Param("instructor") String instructor
     );
+
+    @Query("""
+       SELECT s FROM ScheduleSlot s
+       WHERE s.student.id = :studentId
+       AND s.booked = true
+       ORDER BY s.date DESC, s.timeFrom DESC
+       LIMIT 1
+       """)
+    Optional<ScheduleSlot> findLastBookedStudentSlot(Long studentId);
 }
