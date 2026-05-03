@@ -23,7 +23,7 @@ public class MigrationService {
         for (ScheduleSlot slot : allSlots) {
             String instructor = slot.getInstructor().getName();
             LocalDate date = slot.getDate();
-            LocalTime from = slot.getTimeFrom();
+            LocalTime from = slot.getStartTime();
 
             // 1. Delete all 18:30 entries for everyone except Dina and Yulia
             if (from.equals(LocalTime.of(18, 30))
@@ -42,16 +42,16 @@ public class MigrationService {
 
                 // Saturday 3:00 PM → reschedule for 4:00 PM
                 if (date.getDayOfWeek() == DayOfWeek.SATURDAY && from.equals(LocalTime.of(15, 0))) {
-                    slot.setTimeFrom(LocalTime.of(16, 0));
-                    slot.setTimeTo(LocalTime.of(19, 0));
+                    slot.setStartTime(LocalTime.of(16, 0));
+                    slot.setEndTime(LocalTime.of(19, 0));
                     scheduleSlotRepository.save(slot);
                     continue;
                 }
 
                 // any 18:30 → change to 18:15
                 if (from.equals(LocalTime.of(18, 30))) {
-                    slot.setTimeFrom(LocalTime.of(18, 15));
-                    slot.setTimeTo(LocalTime.of(20, 15));
+                    slot.setStartTime(LocalTime.of(18, 15));
+                    slot.setEndTime(LocalTime.of(20, 15));
                     scheduleSlotRepository.save(slot);
                     continue;
                 }
@@ -60,8 +60,8 @@ public class MigrationService {
             // 3. For Yulia
             if (instructor.equalsIgnoreCase("Юлія")) {
                 if (from.equals(LocalTime.of(18, 30))) {
-                    slot.setTimeFrom(LocalTime.of(18, 15));
-                    slot.setTimeTo(LocalTime.of(20, 15));
+                    slot.setStartTime(LocalTime.of(18, 15));
+                    slot.setEndTime(LocalTime.of(20, 15));
                     scheduleSlotRepository.save(slot);
                 }
             }
@@ -76,8 +76,8 @@ public class MigrationService {
             LocalDate date = slot.getDate();
 
             if (date.getMonth().getValue() >= 12) {
-                slot.setTimeFrom(slot.getTimeFrom().minusHours(1));
-                slot.setTimeTo(slot.getTimeTo().minusHours(1));
+                slot.setStartTime(slot.getStartTime().minusHours(1));
+                slot.setEndTime(slot.getEndTime().minusHours(1));
             }
         }
     }

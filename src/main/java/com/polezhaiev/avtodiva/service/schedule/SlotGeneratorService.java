@@ -38,15 +38,15 @@ public class SlotGeneratorService {
                         LocalTime from = LocalTime.of(hours[j][0], hours[j][1]);
                         LocalTime to = (j == hours.length - 1 && hours.length > 1 && hours[j][0] >= 17) ? from.plusHours(2) : from.plusHours(3);
 
-                        boolean exists = scheduleSlotRepository.existsByDateAndTimeFromAndInstructorAndCar(
+                        boolean exists = scheduleSlotRepository.existsByDateAndStartTimeAndInstructorAndCar(
                                 targetDate, from, instructor, car
                         );
                         if (exists) continue;
 
                         ScheduleSlot slot = new ScheduleSlot();
                         slot.setDate(targetDate);
-                        slot.setTimeFrom(from);
-                        slot.setTimeTo(to);
+                        slot.setStartTime(from);
+                        slot.setEndTime(to);
                         slot.setInstructor(instructor);
                         slot.setCar(car);
                         slot.setStudent(null);
@@ -81,15 +81,15 @@ public class SlotGeneratorService {
                             ? from.plusHours(2)
                             : from.plusHours(3);
 
-                    boolean exists = scheduleSlotRepository.existsByDateAndTimeFromAndInstructorAndCar(
+                    boolean exists = scheduleSlotRepository.existsByDateAndStartTimeAndInstructorAndCar(
                             targetDate, from, instructor, car
                     );
                     if (exists) continue;
 
                     ScheduleSlot slot = new ScheduleSlot();
                     slot.setDate(targetDate);
-                    slot.setTimeFrom(from);
-                    slot.setTimeTo(to);
+                    slot.setStartTime(from);
+                    slot.setEndTime(to);
                     slot.setInstructor(instructor);
                     slot.setCar(car);
                     slot.setBooked(false);
@@ -120,15 +120,15 @@ public class SlotGeneratorService {
                             ? from.plusHours(2)
                             : from.plusHours(3);
 
-                    boolean exists = scheduleSlotRepository.existsByDateAndTimeFromAndInstructorAndCar(
+                    boolean exists = scheduleSlotRepository.existsByDateAndStartTimeAndInstructorAndCar(
                             targetDate, from, instructor, car
                     );
                     if (exists) continue;
 
                     ScheduleSlot slot = new ScheduleSlot();
                     slot.setDate(targetDate);
-                    slot.setTimeFrom(from);
-                    slot.setTimeTo(to);
+                    slot.setStartTime(from);
+                    slot.setEndTime(to);
                     slot.setInstructor(instructor);
                     slot.setCar(car);
                     slot.setBooked(false);

@@ -18,8 +18,8 @@ public class ScheduleValidatorService {
         if (weekendRepository.existsWeekendConflict(
                 requestDto.getInstructorId(),
                 requestDto.getDate(),
-                requestDto.getTimeFrom(),
-                requestDto.getTimeTo()
+                requestDto.getStartTime(),
+                requestDto.getEndTime()
         )) {
             throw new IllegalStateException("The slot falls during off/non-working hours!");
         }
@@ -28,8 +28,8 @@ public class ScheduleValidatorService {
                 requestDto.getInstructorId(),
                 requestDto.getCarId(),
                 requestDto.getDate(),
-                requestDto.getTimeFrom(),
-                requestDto.getTimeTo()
+                requestDto.getStartTime(),
+                requestDto.getEndTime()
         )) {
             throw new IllegalStateException("That car or instructor is already busy at this time!");
         }
@@ -39,8 +39,8 @@ public class ScheduleValidatorService {
         if (weekendRepository.existsWeekendConflict(
                 requestDto.getInstructorId(),
                 requestDto.getDate(),
-                requestDto.getTimeFrom(),
-                requestDto.getTimeTo()
+                requestDto.getStartTime(),
+                requestDto.getEndTime()
         )) {
             throw new IllegalStateException("The slot falls during off/non-working hours!");
         }
@@ -49,8 +49,8 @@ public class ScheduleValidatorService {
                 requestDto.getInstructorId(),
                 requestDto.getCarId(),
                 requestDto.getDate(),
-                requestDto.getTimeFrom(),
-                requestDto.getTimeTo(),
+                requestDto.getStartTime(),
+                requestDto.getEndTime(),
                 excludedSlotId // exclude the slot itself, otherwise it will always cause a conflict
         )) {
             throw new IllegalStateException("This instructor or car is already busy at this time!");
@@ -58,11 +58,11 @@ public class ScheduleValidatorService {
     }
 
     public void checkSlotExists(CreateScheduleSlotRequestDto requestDto) {
-        if (scheduleSlotRepository.existsByInstructorIdAndCarIdAndDateAndTimeFrom(
+        if (scheduleSlotRepository.existsByInstructorIdAndCarIdAndDateAndStartTime(
                 requestDto.getInstructorId(),
                 requestDto.getCarId(),
                 requestDto.getDate(),
-                requestDto.getTimeFrom()))
+                requestDto.getStartTime()))
         {
             throw new IllegalStateException("Error: The slot by instructor id: "
                     + requestDto.getInstructorId()
@@ -71,7 +71,7 @@ public class ScheduleValidatorService {
                     + " and date: "
                     + requestDto.getDate().toString()
                     + " and time from "
-                    + requestDto.getTimeFrom().toString()
+                    + requestDto.getStartTime().toString()
                     + " already exists");
         }
     }
@@ -87,6 +87,6 @@ public class ScheduleValidatorService {
         return !existing.getInstructor().getId().equals(requestDto.getInstructorId()) ||
                 !existing.getCar().getId().equals(requestDto.getCarId()) ||
                 !existing.getDate().equals(requestDto.getDate()) ||
-                !existing.getTimeFrom().equals(requestDto.getTimeFrom());
+                !existing.getStartTime().equals(requestDto.getStartTime());
     }
 }

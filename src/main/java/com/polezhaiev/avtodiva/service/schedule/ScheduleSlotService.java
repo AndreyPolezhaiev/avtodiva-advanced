@@ -66,7 +66,7 @@ public class ScheduleSlotService {
     }
 
     public ScheduleSlotResponseDto findById(Long id) {
-        ScheduleSlot scheduleSlotFromRepo = scheduleSlotRepository.findById(id).orElseThrow(
+        ScheduleSlot scheduleSlotFromRepo = scheduleSlotRepository.findSlotById(id).orElseThrow(
                 () -> new RuntimeException("Can't find slot by id: " + id)
         );
 
@@ -85,7 +85,7 @@ public class ScheduleSlotService {
      * @param id
      */
     public void deleteById(Long id) {
-        ScheduleSlot scheduleSlotFromRepo = scheduleSlotRepository.findById(id).orElseThrow(
+        ScheduleSlot scheduleSlotFromRepo = scheduleSlotRepository.findSlotById(id).orElseThrow(
                 () -> new RuntimeException("Can't find slot by id: " + id)
         );
 
@@ -98,8 +98,22 @@ public class ScheduleSlotService {
     }
 
     @Transactional
+    public void clearSlotsByStudentId(Long studentId) {
+        List<ScheduleSlot> forClearing = scheduleSlotRepository.findAllByStudentId(studentId);
+
+        for (ScheduleSlot slot: forClearing) {
+            slot.setStudent(null);
+            slot.setDescription(null);
+            slot.setLink(null);
+            slot.setBooked(false);
+        }
+
+        scheduleSlotRepository.saveAll(forClearing);
+    }
+
+    @Transactional
     public ScheduleSlotResponseDto updateById(Long id, UpdateScheduleSlotRequestDto requestDto) {
-        ScheduleSlot existing = scheduleSlotRepository.findById(id).orElseThrow(
+        ScheduleSlot existing = scheduleSlotRepository.findSlotById(id).orElseThrow(
                 () -> new IllegalArgumentException("Can't find slot by id: " + id)
         );
 
@@ -124,8 +138,8 @@ public class ScheduleSlotService {
         existing.setStudent(student);
         existing.setInstructor(instructor);
         existing.setCar(car);
-        existing.setTimeFrom(requestDto.getTimeFrom());
-        existing.setTimeTo(requestDto.getTimeTo());
+        existing.setStartTime(requestDto.getStartTime());
+        existing.setEndTime(requestDto.getEndTime());
         existing.setDate(requestDto.getDate());
         existing.setBooked(student != null);
 

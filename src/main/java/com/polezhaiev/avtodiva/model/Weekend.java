@@ -16,16 +16,23 @@ import java.time.LocalTime;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Weekend {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "weekend_seq_gen")
+    @SequenceGenerator(
+            name = "weekend_seq_gen",
+            sequenceName = "weekend_id_seq",
+            allocationSize = 20
+    )
     @EqualsAndHashCode.Include
     @ToString.Include
     private Long id;
     @ToString.Include
-    private LocalDate day;
+    private LocalDate date;
     @ToString.Include
-    private LocalTime timeFrom;
+    @Column(name = "start_time")
+    private LocalTime startTime;
     @ToString.Include
-    private LocalTime timeTo;
+    @Column(name = "end_time")
+    private LocalTime endTime;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instructor_id", nullable = false)
     @ToString.Exclude

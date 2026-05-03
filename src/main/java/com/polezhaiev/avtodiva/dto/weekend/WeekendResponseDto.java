@@ -11,8 +11,8 @@ import java.time.LocalTime;
 @Accessors(chain = true)
 public class WeekendResponseDto {
     private Long id;
-    private LocalDate day;
-    private LocalTime timeFrom;
-    private LocalTime timeTo;
+    private LocalDate date;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private InstructorResponseDto instructorDto;
 }

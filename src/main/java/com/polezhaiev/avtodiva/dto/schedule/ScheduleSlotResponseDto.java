@@ -14,8 +14,8 @@ import java.time.LocalTime;
 public class ScheduleSlotResponseDto {
     private Long id;
     private LocalDate date;
-    private LocalTime timeFrom;
-    private LocalTime timeTo;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private InstructorResponseDto instructorDto;
     private CarResponseDto carDto;
     private StudentResponseDto studentDto;

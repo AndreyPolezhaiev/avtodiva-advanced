@@ -13,7 +13,7 @@ public class PhoneSpecification {
             String cleanPhone = phoneNumber.replaceAll("\\D", "");
 
             return cb.like(
-                    cb.lower(root.get("phone_number")),
+                    root.get("phoneNumber"),
                     "%" + cleanPhone + "%"
             );
         };

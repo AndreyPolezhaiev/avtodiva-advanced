@@ -3,6 +3,8 @@ package com.polezhaiev.avtodiva.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -12,7 +14,7 @@ import java.time.LocalTime;
         @Index(name = "idx_instructor_date", columnList = "instructor_id, date"),
         @Index(name = "idx_student_id", columnList = "student_id"),
         @Index(name = "idx_car_date", columnList = "car_id, date"),
-        @Index(name = "idx_date_time_from_to", columnList = "date, timeFrom, timeTo"),
+        @Index(name = "idx_date_time_from_to", columnList = "date, startTime, endTime"),
         @Index(name = "idx_booked_instructor", columnList = "booked, instructor_id")
 })
 @Data
@@ -21,8 +23,10 @@ public class ScheduleSlot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate date;
-    private LocalTime timeFrom;
-    private LocalTime timeTo;
+    @Column(name = "start_time")
+    private LocalTime startTime;
+    @Column(name = "end_time")
+    private LocalTime endTime;
     @ToString.Exclude
     @ManyToOne
     private Instructor instructor;
@@ -30,7 +34,8 @@ public class ScheduleSlot {
     @ManyToOne
     private Car car;
     @ToString.Exclude
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Student student;
     private String description;
     private String link;

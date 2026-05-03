@@ -8,7 +8,6 @@ import com.polezhaiev.avtodiva.model.Instructor;
 import com.polezhaiev.avtodiva.model.Weekend;
 import com.polezhaiev.avtodiva.repository.InstructorRepository;
 import com.polezhaiev.avtodiva.repository.WeekendRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,27 +20,32 @@ public class WeekendService {
     private final InstructorRepository instructorRepository;
     private final WeekendMapper weekendMapper;
 
-    public WeekendResponseDto save(CreateWeekendRequestDto requestDto) {
-        Instructor instructor = instructorRepository.findById(requestDto.getInstructorId()).orElseThrow(
-                () -> new RuntimeException("Can't find instructor by id: " + requestDto.getInstructorId())
+    public List<WeekendResponseDto> saveAll(List<CreateWeekendRequestDto> requestDto) {
+        Instructor instructor = instructorRepository.findById(requestDto.getFirst().getInstructorId()).orElseThrow(
+                () -> new RuntimeException("Can't find instructor by id: " + requestDto.getFirst().getInstructorId())
         );
 
-        Weekend weekend = weekendMapper.toModel(requestDto);
-        weekend.setInstructor(instructor);
-        Weekend saved = weekendRepository.save(weekend);
+        List<Weekend> weekends = requestDto.stream()
+                .map(dto -> {
+                    Weekend weekend = weekendMapper.toModel(dto);
+                    weekend.setInstructor(instructor);
+                    return weekend;
+                })
+                .toList();
 
-        return weekendMapper.toResponseDto(saved);
+        List<Weekend> saved = weekendRepository.saveAll(weekends);
+
+        return weekendMapper.toResponseDtoList(saved);
     }
 
     public List<WeekendResponseDto> findAll() {
-        return weekendRepository.findAll()
-                .stream()
-                .map(weekendMapper::toResponseDto)
-                .toList();
+        List<Weekend> weekends = weekendRepository.findAllWithInstructor();
+
+        return weekendMapper.toResponseDtoList(weekends);
     }
 
     public WeekendResponseDto findById(Long id) {
-        Weekend weekendFromRepo = weekendRepository.findById(id).orElseThrow(
+        Weekend weekendFromRepo = weekendRepository.findByIdWithInstructor(id).orElseThrow(
                 () -> new RuntimeException("Can't find weekend by id: " + id)
         );
 
@@ -57,13 +61,13 @@ public class WeekendService {
     }
 
     public WeekendResponseDto updateById(Long id, UpdateWeekendRequestDto requestDto) {
-        Weekend weekendFromRepo = weekendRepository.findById(id).orElseThrow(
+        Weekend weekendFromRepo = weekendRepository.findByIdWithInstructor(id).orElseThrow(
                 () -> new RuntimeException("Can't find weekend by id: " + id)
         );
 
-        weekendFromRepo.setDay(requestDto.getDay());
-        weekendFromRepo.setTimeFrom(requestDto.getTimeFrom());
-        weekendFromRepo.setTimeTo(requestDto.getTimeTo());
+        weekendFromRepo.setDate(requestDto.getDate());
+        weekendFromRepo.setStartTime(requestDto.getStartTime());
+        weekendFromRepo.setEndTime(requestDto.getEndTime());
 
         Weekend saved = weekendRepository.save(weekendFromRepo);
 

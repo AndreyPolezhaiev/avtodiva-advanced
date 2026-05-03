@@ -3,10 +3,14 @@ package com.polezhaiev.avtodiva.repository;
 import com.polezhaiev.avtodiva.model.Car;
 import com.polezhaiev.avtodiva.model.Instructor;
 import com.polezhaiev.avtodiva.model.ScheduleSlot;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -16,18 +20,27 @@ import java.util.Optional;
 
 @Repository
 public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long>, JpaSpecificationExecutor<ScheduleSlot> {
-    boolean existsByDateAndTimeFromAndInstructorAndCar(
+
+    @Override
+    @EntityGraph(attributePaths = {"instructor", "car", "student"})
+    @NonNull
+    List<ScheduleSlot> findAll(@Nullable Specification<ScheduleSlot> spec);
+
+    @EntityGraph(attributePaths = {"instructor", "car", "student"})
+    Optional<ScheduleSlot> findSlotById(Long id);
+
+    boolean existsByDateAndStartTimeAndInstructorAndCar(
             LocalDate date,
-            LocalTime timeFrom,
+            LocalTime startTime,
             Instructor instructor,
             Car car
     );
 
-    boolean existsByInstructorIdAndCarIdAndDateAndTimeFrom(
+    boolean existsByInstructorIdAndCarIdAndDateAndStartTime(
             Long instructorId,
             Long carId,
             LocalDate date,
-            LocalTime timeFrom
+            LocalTime startTime
     );
 
     @Query("""
@@ -35,16 +48,16 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
     WHERE (s.car.id = :carId OR s.instructor.id = :instructorId)
       AND s.date = :date
       AND s.booked = true
-      AND s.timeFrom < :timeTo
-      AND s.timeTo > :timeFrom
+      AND s.startTime < :endTime
+      AND s.endTime > :startTime
       AND (:excludeId IS NULL OR s.id <> :excludeId)
     """)
     boolean existsBookedInstructorAndCarConflictExcluding(
             @Param("instructorId") Long instructorId,
             @Param("carId") Long carId,
             @Param("date") LocalDate date,
-            @Param("timeFrom") LocalTime timeFrom,
-            @Param("timeTo") LocalTime timeTo,
+            @Param("startTime") LocalTime startTime,
+            @Param("endTime") LocalTime endTime,
             @Param("excludeId") Long excludeId
     );
 
@@ -52,15 +65,15 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
     SELECT COUNT(s) > 0 FROM ScheduleSlot s
     WHERE s.date = :date
       AND s.booked = true
-      AND (s.timeFrom < :timeTo AND s.timeTo > :timeFrom)
+      AND (s.startTime < :endTime AND s.endTime > :startTime)
       AND (s.car.id = :carId OR s.instructor.id = :instructorId)
     """)
     boolean existsBookedInstructorAndCarConflict(
             @Param("instructorId") Long instructorId,
             @Param("carId") Long carId,
             @Param("date") LocalDate date,
-            @Param("timeFrom") LocalTime timeFrom,
-            @Param("timeTo") LocalTime timeTo
+            @Param("startTime") LocalTime startTime,
+            @Param("endTime") LocalTime endTime
     );
 
     @Query("""
@@ -87,12 +100,14 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
             @Param("fromDate") LocalDate fromDate
     );
 
+    @EntityGraph(attributePaths = {"instructor", "car"})
     @Query("""
        SELECT s FROM ScheduleSlot s
        WHERE s.booked = false
        """)
     List<ScheduleSlot> findAllFreeSlots();
 
+    @EntityGraph(attributePaths = {"instructor", "car"})
     @Query("""
        SELECT s FROM ScheduleSlot s
        JOIN FETCH s.instructor i
@@ -103,12 +118,16 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
             @Param("instructor") String instructor
     );
 
+    @EntityGraph(attributePaths = {"instructor", "car"})
     @Query("""
        SELECT s FROM ScheduleSlot s
        WHERE s.student.id = :studentId
        AND s.booked = true
-       ORDER BY s.date DESC, s.timeFrom DESC
+       ORDER BY s.date DESC, s.startTime DESC
        LIMIT 1
        """)
     Optional<ScheduleSlot> findLastBookedStudentSlot(Long studentId);
+
+    @EntityGraph(attributePaths = {"instructor", "car", "student"})
+    List<ScheduleSlot> findAllByStudentId(Long studentId);
 }

@@ -8,6 +8,7 @@ import com.polezhaiev.avtodiva.mapper.StudentMapper;
 import com.polezhaiev.avtodiva.model.Student;
 import com.polezhaiev.avtodiva.repository.StudentRepository;
 import com.polezhaiev.avtodiva.repository.spec.impl.StudentSpecificationBuilder;
+import com.polezhaiev.avtodiva.service.schedule.ScheduleSlotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class StudentService {
+    private final ScheduleSlotService scheduleSlotService;
     private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
     private final StudentSpecificationBuilder specificationBuilder;
@@ -77,6 +79,8 @@ public class StudentService {
         Student studentFromRepo = studentRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Can't find student by id: " + id)
         );
+
+        scheduleSlotService.clearSlotsByStudentId(id);
 
         studentRepository.delete(studentFromRepo);
     }

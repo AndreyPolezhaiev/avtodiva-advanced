@@ -13,9 +13,9 @@ public class UpdateScheduleSlotRequestDto {
     @NotNull
     private LocalDate date;
     @NotNull
-    private LocalTime timeFrom;
+    private LocalTime startTime;
     @NotNull
-    private LocalTime timeTo;
+    private LocalTime endTime;
     @NotNull
     private Long instructorId;
     @NotNull

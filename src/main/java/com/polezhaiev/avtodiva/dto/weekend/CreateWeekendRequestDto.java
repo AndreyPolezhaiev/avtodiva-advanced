@@ -12,24 +12,24 @@ import java.time.LocalTime;
 @Data
 @Accessors(chain = true)
 public class CreateWeekendRequestDto {
-    @NotNull(message = "Day can't be null")
-    @FutureOrPresent(message = "Day must be today or in the future")
-    private LocalDate day;
+    @NotNull(message = "Date can't be null")
+    @FutureOrPresent(message = "Date must be today or in the future")
+    private LocalDate date;
 
     @NotNull(message = "Time from can't be null")
-    private LocalTime timeFrom;
+    private LocalTime startTime;
 
     @NotNull(message = "Time to can't be null")
-    private LocalTime timeTo;
+    private LocalTime endTime;
 
     @NotNull(message = "Instructor id can't be null")
     private Long instructorId;
 
     @AssertTrue(message = "Time to must be after time from")
     public boolean isTimeRangeValid() {
-        if (timeFrom == null || timeTo == null) {
+        if (startTime == null || endTime == null) {
             return true;
         }
-        return timeTo.isAfter(timeFrom);
+        return endTime.isAfter(startTime);
     }
 }

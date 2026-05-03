@@ -21,7 +21,7 @@ public class StudentSpecificationBuilder implements SpecificationBuilder<Student
         if (searchParameters.getPhoneNumber() != null && !searchParameters.getPhoneNumber().isBlank()) {
             spec = spec.and(PhoneSpecification.getSpecification(searchParameters.getPhoneNumber()));
         }
-
+        System.out.println("Building spec for: " + searchParameters);
         return spec;
     }
 }

@@ -10,10 +10,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
+
 @Mapper(config = MapperConfig.class)
 public interface WeekendMapper {
     @Mapping(target = "instructorDto", ignore = true)
     WeekendResponseDto toResponseDto(Weekend weekend);
+
+    List<WeekendResponseDto> toResponseDtoList(List<Weekend> weekends);
 
     @AfterMapping
     default void setInstructorDto(@MappingTarget WeekendResponseDto dto, Weekend weekend) {

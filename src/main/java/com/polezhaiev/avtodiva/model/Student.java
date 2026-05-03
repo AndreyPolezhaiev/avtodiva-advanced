@@ -19,7 +19,7 @@ public class Student {
     @Column(name = "phone_number", unique = true)
     private String phoneNumber;
     @ToString.Exclude
-    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     private List<ScheduleSlot> scheduleSlots;
 
     @PrePersist
