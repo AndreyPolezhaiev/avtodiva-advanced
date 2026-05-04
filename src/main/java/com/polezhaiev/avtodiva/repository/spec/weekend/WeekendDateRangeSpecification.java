@@ -1,12 +1,12 @@
-package com.polezhaiev.avtodiva.repository.spec.schedule;
+package com.polezhaiev.avtodiva.repository.spec.weekend;
 
-import com.polezhaiev.avtodiva.model.ScheduleSlot;
+import com.polezhaiev.avtodiva.model.Weekend;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 
-public class DateRangeSpecification {
-    public static Specification<ScheduleSlot> getSpecification(LocalDate from, LocalDate to) {
+public class WeekendDateRangeSpecification {
+    public static Specification<Weekend> getSpecification(LocalDate from, LocalDate to) {
         return (root, query, cb) -> {
             if (from == null && to == null) return null;
             if (from != null && to != null) return cb.between(root.get("date"), from, to);

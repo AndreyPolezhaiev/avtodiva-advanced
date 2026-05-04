@@ -1,7 +1,6 @@
 package com.polezhaiev.avtodiva.repository.spec.impl;
 
 import com.polezhaiev.avtodiva.dto.schedule.SlotSearchParametersDto;
-import com.polezhaiev.avtodiva.dto.student.StudentSearchParametersDto;
 import com.polezhaiev.avtodiva.model.ScheduleSlot;
 import com.polezhaiev.avtodiva.repository.spec.SpecificationBuilder;
 import com.polezhaiev.avtodiva.repository.spec.schedule.*;
@@ -21,13 +20,13 @@ public class ScheduleSlotSpecificationBuilder implements SpecificationBuilder<Sc
             spec = spec.and(CarSpecification.getSpecification(searchParameters.getCarIds()));
         }
         if (searchParameters.getInstructorIds() != null && !searchParameters.getInstructorIds().isEmpty()) {
-            spec = spec.and(InstructorSpecification.getSpecification(searchParameters.getInstructorIds()));
+            spec = spec.and(SlotInstructorSpecification.getSpecification(searchParameters.getInstructorIds()));
         }
         if (searchParameters.getStudentId() != null) {
             spec = spec.and(StudentSpecification.getSpecification(searchParameters.getStudentId()));
         }
         if (searchParameters.getDateFrom() != null || searchParameters.getDateTo() != null) {
-            spec = spec.and(DateRangeSpecification.getSpecification(
+            spec = spec.and(SlotDateRangeSpecification.getSpecification(
                     searchParameters.getDateFrom(),
                     searchParameters.getDateTo()
             ));

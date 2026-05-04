@@ -5,7 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
-public class InstructorSpecification {
+public class SlotInstructorSpecification {
     public static Specification<ScheduleSlot> getSpecification(List<Long> instructorIds) {
         return (root, query, cb) ->
                 (instructorIds == null || instructorIds.isEmpty())

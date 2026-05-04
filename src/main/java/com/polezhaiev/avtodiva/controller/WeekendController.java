@@ -3,6 +3,7 @@ package com.polezhaiev.avtodiva.controller;
 import com.polezhaiev.avtodiva.dto.weekend.CreateWeekendRequestDto;
 import com.polezhaiev.avtodiva.dto.weekend.UpdateWeekendRequestDto;
 import com.polezhaiev.avtodiva.dto.weekend.WeekendResponseDto;
+import com.polezhaiev.avtodiva.dto.weekend.WeekendSearchParametersDto;
 import com.polezhaiev.avtodiva.mapper.WeekendMapper;
 import com.polezhaiev.avtodiva.service.weekend.WeekendService;
 import jakarta.validation.Valid;
@@ -30,11 +31,11 @@ public class WeekendController {
         return ResponseEntity.status(HttpStatus.CREATED).body(weekendResponseDto);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<WeekendResponseDto>> getAllWeekends() {
-        List<WeekendResponseDto> allWeekends = weekendService.findAll();
+    @GetMapping("/search")
+    public ResponseEntity<List<WeekendResponseDto>> searchWeekends(WeekendSearchParametersDto searchParameters) {
+        List<WeekendResponseDto> response = weekendService.searchWeekends(searchParameters);
 
-        return ResponseEntity.status(HttpStatus.OK).body(allWeekends);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")

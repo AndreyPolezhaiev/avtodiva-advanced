@@ -3,12 +3,15 @@ package com.polezhaiev.avtodiva.service.weekend;
 import com.polezhaiev.avtodiva.dto.weekend.CreateWeekendRequestDto;
 import com.polezhaiev.avtodiva.dto.weekend.UpdateWeekendRequestDto;
 import com.polezhaiev.avtodiva.dto.weekend.WeekendResponseDto;
+import com.polezhaiev.avtodiva.dto.weekend.WeekendSearchParametersDto;
 import com.polezhaiev.avtodiva.mapper.WeekendMapper;
 import com.polezhaiev.avtodiva.model.Instructor;
 import com.polezhaiev.avtodiva.model.Weekend;
 import com.polezhaiev.avtodiva.repository.InstructorRepository;
 import com.polezhaiev.avtodiva.repository.WeekendRepository;
+import com.polezhaiev.avtodiva.repository.spec.impl.WeekendSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +22,7 @@ public class WeekendService {
     private final WeekendRepository weekendRepository;
     private final InstructorRepository instructorRepository;
     private final WeekendMapper weekendMapper;
+    private final WeekendSpecificationBuilder specificationBuilder;
 
     public List<WeekendResponseDto> saveAll(List<CreateWeekendRequestDto> requestDto) {
         Instructor instructor = instructorRepository.findById(requestDto.getFirst().getInstructorId()).orElseThrow(
@@ -38,10 +42,13 @@ public class WeekendService {
         return weekendMapper.toResponseDtoList(saved);
     }
 
-    public List<WeekendResponseDto> findAll() {
-        List<Weekend> weekends = weekendRepository.findAllWithInstructor();
+    public List<WeekendResponseDto> searchWeekends(WeekendSearchParametersDto searchParameters) {
+        Specification<Weekend> weekendSpecification = specificationBuilder.build(searchParameters);
 
-        return weekendMapper.toResponseDtoList(weekends);
+        return weekendRepository.findAll(weekendSpecification)
+                .stream()
+                .map(weekendMapper::toResponseDto)
+                .toList();
     }
 
     public WeekendResponseDto findById(Long id) {

@@ -1,9 +1,15 @@
 package com.polezhaiev.avtodiva.repository;
 
+import com.polezhaiev.avtodiva.model.ScheduleSlot;
 import com.polezhaiev.avtodiva.model.Weekend;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -12,9 +18,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface WeekendRepository extends JpaRepository<Weekend, Long> {
-    @Query("SELECT w FROM Weekend w JOIN FETCH w.instructor")
-    List<Weekend> findAllWithInstructor();
+public interface WeekendRepository extends JpaRepository<Weekend, Long>, JpaSpecificationExecutor<Weekend> {
+    @Override
+    @EntityGraph(attributePaths = {"instructor"})
+    @NonNull
+    List<Weekend> findAll(@Nullable Specification<Weekend> spec);
 
     @Query("SELECT w FROM Weekend w JOIN FETCH w.instructor WHERE w.id = :id")
     Optional<Weekend> findByIdWithInstructor(@Param("id") Long id);
