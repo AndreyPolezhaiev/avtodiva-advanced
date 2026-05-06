@@ -17,7 +17,7 @@ public class Car {
     @ToString.Exclude
     @OneToMany(
             mappedBy = "car",
-            cascade = CascadeType.ALL,
+            cascade = {CascadeType.REMOVE},
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )

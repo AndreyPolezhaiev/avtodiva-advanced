@@ -24,16 +24,19 @@ public class Instructor {
 
     @OneToMany(
             mappedBy = "instructor",
-            cascade = CascadeType.ALL,
+            cascade = {CascadeType.REMOVE},
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Weekend> weekends;
 
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "instructor",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            cascade = {CascadeType.REMOVE},
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     private List<ScheduleSlot> slots;
 }

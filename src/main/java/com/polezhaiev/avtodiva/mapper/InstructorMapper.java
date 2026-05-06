@@ -11,7 +11,9 @@ import org.mapstruct.Mapping;
 @Mapper(config = MapperConfig.class, uses = {WeekendMapper.class})
 public interface InstructorMapper {
     InstructorResponseDto toResponseDto(Instructor instructor);
+
     @Mapping(target = "slots", ignore = true)
     InstructorDetailedResponseDto toDetailedResponseDto(Instructor instructor);
+
     Instructor toModel(CreateInstructorRequestDto requestDto);
 }

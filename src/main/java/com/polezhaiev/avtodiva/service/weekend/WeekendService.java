@@ -13,6 +13,7 @@ import com.polezhaiev.avtodiva.repository.spec.impl.WeekendSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -67,14 +68,20 @@ public class WeekendService {
         weekendRepository.delete(weekendFromRepo);
     }
 
+    @Transactional
     public WeekendResponseDto updateById(Long id, UpdateWeekendRequestDto requestDto) {
         Weekend weekendFromRepo = weekendRepository.findByIdWithInstructor(id).orElseThrow(
                 () -> new RuntimeException("Can't find weekend by id: " + id)
         );
 
+        Instructor instructor = instructorRepository.findById(requestDto.getInstructorId()).orElseThrow(
+                () -> new RuntimeException("Can't find instructor by id: " + requestDto.getInstructorId())
+        );
+
         weekendFromRepo.setDate(requestDto.getDate());
         weekendFromRepo.setStartTime(requestDto.getStartTime());
         weekendFromRepo.setEndTime(requestDto.getEndTime());
+        weekendFromRepo.setInstructor(instructor);
 
         Weekend saved = weekendRepository.save(weekendFromRepo);
 

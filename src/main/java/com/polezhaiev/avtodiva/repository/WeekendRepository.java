@@ -24,7 +24,8 @@ public interface WeekendRepository extends JpaRepository<Weekend, Long>, JpaSpec
     @NonNull
     List<Weekend> findAll(@Nullable Specification<Weekend> spec);
 
-    @Query("SELECT w FROM Weekend w JOIN FETCH w.instructor WHERE w.id = :id")
+    @EntityGraph(attributePaths = {"instructor"})
+    @Query("SELECT w FROM Weekend w WHERE w.id = :id")
     Optional<Weekend> findByIdWithInstructor(@Param("id") Long id);
 
     @Query("""

@@ -22,6 +22,9 @@ public class UpdateWeekendRequestDto {
     @NotNull(message = "Time to can't be null")
     private LocalTime endTime;
 
+    @NotNull(message = "Instructor Id can't be null")
+    private Long instructorId;
+
     @AssertTrue(message = "Time to must be after time from")
     public boolean isTimeRangeValid() {
         if (startTime == null || endTime == null) {
