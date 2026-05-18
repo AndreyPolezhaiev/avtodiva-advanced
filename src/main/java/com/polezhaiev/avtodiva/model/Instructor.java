@@ -1,5 +1,6 @@
 package com.polezhaiev.avtodiva.model;
 
+import com.polezhaiev.avtodiva.model.template.time.ScheduleTemplate;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,4 +40,14 @@ public class Instructor {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     private List<ScheduleSlot> slots;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToOne(
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(name = "schedule_template_id")
+    private ScheduleTemplate scheduleTemplate;
 }

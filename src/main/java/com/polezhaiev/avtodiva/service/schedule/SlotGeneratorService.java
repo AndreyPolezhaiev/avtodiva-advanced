@@ -1,141 +1,131 @@
 package com.polezhaiev.avtodiva.service.schedule;
 
+import com.polezhaiev.avtodiva.dto.instructor.InstructorCarMaxDate;
+import com.polezhaiev.avtodiva.dto.schedule.SlotGenerationRequestDto;
 import com.polezhaiev.avtodiva.model.Car;
 import com.polezhaiev.avtodiva.model.Instructor;
 import com.polezhaiev.avtodiva.model.ScheduleSlot;
+import com.polezhaiev.avtodiva.model.template.time.TimeSlot;
 import com.polezhaiev.avtodiva.repository.CarRepository;
 import com.polezhaiev.avtodiva.repository.InstructorRepository;
 import com.polezhaiev.avtodiva.repository.ScheduleSlotRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
-
-import static com.polezhaiev.avtodiva.service.schedule.util.WorkingHoursProvider.getWorkingHours;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class SlotGeneratorService {
+    private static final String JOIN = "-";
+
     private final ScheduleSlotRepository scheduleSlotRepository;
     private final CarRepository carRepository;
     private final InstructorRepository instructorRepository;
 
-    public void addFreeWindowsForEachInstructor(int days) {
-        List<Instructor> allInstructors = instructorRepository.findAll();
-        List<Car> allCars = carRepository.findAll();
+    @Transactional
+    public void addFreeWindowsForEachInstructor(SlotGenerationRequestDto requestDto) {
+        int days = requestDto.getDays();
 
-        for (Instructor instructor : allInstructors) {
-            for (Car car : allCars) {
-                LocalDate lastDate = scheduleSlotRepository.findMaxFreeDateByInstructorAndCar(instructor, car);
-                LocalDate startDate = lastDate != null ? lastDate.plusDays(1) : LocalDate.now();
+        List<Instructor> instructors =
+                (requestDto.getInstructorIds() == null || requestDto.getInstructorIds().isEmpty())
+                    ? instructorRepository.findAll()
+                    : instructorRepository.findAllById(requestDto.getInstructorIds());
+
+        List<Car> cars = (requestDto.getCarIds() == null || requestDto.getCarIds().isEmpty())
+                ? carRepository.findAll()
+                : carRepository.findAllById(requestDto.getCarIds());
+
+        if (instructors.isEmpty() || cars.isEmpty()) {
+            throw new IllegalStateException("Can't generate slots: Cars or Instructors don't exists");
+        }
+
+        List<ScheduleSlot> newSlots = new ArrayList<>();
+
+        List<Long> instructorIds = instructors.stream().map(Instructor::getId).toList();
+        List<Long> carIds = cars.stream().map(Car::getId).toList();
+
+        Map<String, LocalDate> maxDateMap = scheduleSlotRepository.findAllMaxDatesGrouped(instructorIds, carIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        dto -> generateKey(dto.instructorId(), dto.carId()),
+                        InstructorCarMaxDate::maxDate
+                ));
+
+        LocalDate rangeStart = maxDateMap.values().stream()
+                .min(LocalDate::compareTo)
+                .orElse(LocalDate.now());
+
+        LocalDate rangeEnd = maxDateMap.values().stream()
+                .max(LocalDate::compareTo)
+                .orElse(LocalDate.now())
+                .plusDays(days);
+
+        Set<String> existingKeys = scheduleSlotRepository.findFilteredByDateBetween(rangeStart, rangeEnd, instructorIds, carIds)
+                .stream()
+                .map(this::generateKey)
+                .collect(Collectors.toSet());
+
+        for (Instructor instructor : instructors) {
+            List<TimeSlot> timeIntervals = instructor.getScheduleTemplate().getIntervals();
+            if (timeIntervals == null || timeIntervals.isEmpty()) continue;
+
+            for (Car car : cars) {
+                String mapKey = generateKey(instructor.getId(), car.getId());
+                LocalDate endDate = maxDateMap.get(mapKey);
+                LocalDate startDate = (endDate != null) ? endDate.plusDays(1) : LocalDate.now();
 
                 for (int i = 0; i < days; i++) {
                     LocalDate targetDate = startDate.plusDays(i);
-                    int[][] hours = getWorkingHours(instructor.getName(), targetDate);
 
-                    for (int j = 0; j < hours.length; j++) {
-                        LocalTime from = LocalTime.of(hours[j][0], hours[j][1]);
-                        LocalTime to = (j == hours.length - 1 && hours.length > 1 && hours[j][0] >= 17) ? from.plusHours(2) : from.plusHours(3);
+                    timeIntervals.forEach(timeSlot -> {
+                        LocalTime startTime = timeSlot.getStartTime();
+                        String currentKey = generateKey(targetDate, startTime, instructor, car);
 
-                        boolean exists = scheduleSlotRepository.existsByDateAndStartTimeAndInstructorAndCar(
-                                targetDate, from, instructor, car
-                        );
-                        if (exists) continue;
-
-                        ScheduleSlot slot = new ScheduleSlot();
-                        slot.setDate(targetDate);
-                        slot.setStartTime(from);
-                        slot.setEndTime(to);
-                        slot.setInstructor(instructor);
-                        slot.setCar(car);
-                        slot.setStudent(null);
-                        slot.setDescription(null);
-                        slot.setLink(null);
-                        slot.setBooked(false);
-
-                        scheduleSlotRepository.save(slot);
-                    }
+                        if (!existingKeys.contains(currentKey)) {
+                            ScheduleSlot slot = createNewSlot(targetDate, timeSlot, instructor, car);
+                            newSlots.add(slot);
+                        }
+                    });
                 }
             }
+        }
+
+        if (!newSlots.isEmpty()) {
+            scheduleSlotRepository.saveAll(newSlots);
         }
     }
 
-    public void addFreeWindowsForCar(String carName, int days) {
-        Car car = carRepository.findByName(carName)
-                .orElseThrow(() -> new RuntimeException("Car by name: " + carName + " not found"));
-
-        List<Instructor> allInstructors = instructorRepository.findAll();
-
-        for (Instructor instructor : allInstructors) {
-            LocalDate lastDate = scheduleSlotRepository.findMaxFreeDateByInstructorAndCar(instructor, car);
-            LocalDate startDate = lastDate != null ? lastDate.plusDays(1) : LocalDate.now();
-
-            for (int i = 0; i < days; i++) {
-                LocalDate targetDate = startDate.plusDays(i);
-                int[][] hours = getWorkingHours(instructor.getName(), targetDate);
-
-                for (int j = 0; j < hours.length; j++) {
-                    LocalTime from = LocalTime.of(hours[j][0], hours[j][1]);
-                    LocalTime to = (j == hours.length - 1 && hours.length > 1 && hours[j][0] >= 17)
-                            ? from.plusHours(2)
-                            : from.plusHours(3);
-
-                    boolean exists = scheduleSlotRepository.existsByDateAndStartTimeAndInstructorAndCar(
-                            targetDate, from, instructor, car
-                    );
-                    if (exists) continue;
-
-                    ScheduleSlot slot = new ScheduleSlot();
-                    slot.setDate(targetDate);
-                    slot.setStartTime(from);
-                    slot.setEndTime(to);
-                    slot.setInstructor(instructor);
-                    slot.setCar(car);
-                    slot.setBooked(false);
-
-                    scheduleSlotRepository.save(slot);
-                }
-            }
-        }
+    private String generateKey(LocalDate date, LocalTime time, Instructor instructor, Car car) {
+        return date.toString() + "_" + time.toString() + "_" + instructor.getId() + "_" + car.getId();
     }
 
-    public void addFreeWindowsForInstructor(String instructorName, int days) {
-        Instructor instructor = instructorRepository.findByName(instructorName)
-                .orElseThrow(() -> new RuntimeException("Instructor by name: " + instructorName + " not found"));
+    private String generateKey(ScheduleSlot slot) {
+        return generateKey(slot.getDate(), slot.getStartTime(), slot.getInstructor(), slot.getCar());
+    }
 
-        List<Car> allCars = carRepository.findAll();
+    private String generateKey(long instructorId, long carId) {
+        return instructorId + JOIN + carId;
+    }
 
-        for (Car car : allCars) {
-            LocalDate lastDate = scheduleSlotRepository.findMaxFreeDateByInstructorAndCar(instructor, car);
-            LocalDate startDate = lastDate != null ? lastDate.plusDays(1) : LocalDate.now();
+    private ScheduleSlot createNewSlot(LocalDate date, TimeSlot timeSlot, Instructor instructor, Car car) {
+        ScheduleSlot slot = new ScheduleSlot();
+        slot.setDate(date);
+        slot.setStartTime(timeSlot.getStartTime());
+        slot.setEndTime(timeSlot.getEndTime());
+        slot.setInstructor(instructor);
+        slot.setCar(car);
+        slot.setStudent(null);
+        slot.setDescription(null);
+        slot.setLink(null);
+        slot.setBooked(false);
 
-            for (int i = 0; i < days; i++) {
-                LocalDate targetDate = startDate.plusDays(i);
-                int[][] hours = getWorkingHours(instructor.getName(), targetDate);
-
-                for (int j = 0; j < hours.length; j++) {
-                    LocalTime from = LocalTime.of(hours[j][0], hours[j][1]);
-                    LocalTime to = (j == hours.length - 1 && hours.length > 1 && hours[j][0] >= 17)
-                            ? from.plusHours(2)
-                            : from.plusHours(3);
-
-                    boolean exists = scheduleSlotRepository.existsByDateAndStartTimeAndInstructorAndCar(
-                            targetDate, from, instructor, car
-                    );
-                    if (exists) continue;
-
-                    ScheduleSlot slot = new ScheduleSlot();
-                    slot.setDate(targetDate);
-                    slot.setStartTime(from);
-                    slot.setEndTime(to);
-                    slot.setInstructor(instructor);
-                    slot.setCar(car);
-                    slot.setBooked(false);
-
-                    scheduleSlotRepository.save(slot);
-                }
-            }
-        }
+        return slot;
     }
 }

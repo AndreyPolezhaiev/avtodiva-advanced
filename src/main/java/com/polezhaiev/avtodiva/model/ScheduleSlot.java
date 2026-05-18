@@ -20,7 +20,12 @@ import java.time.LocalTime;
 @Data
 public class ScheduleSlot {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "schedule_slot_seq_gen")
+    @SequenceGenerator(
+            name = "schedule_slot_seq_gen",
+            sequenceName = "schedule_slot_id_sequence",
+            allocationSize = 50
+    )
     private Long id;
     private LocalDate date;
     @Column(name = "start_time")
