@@ -1,7 +1,7 @@
 package com.polezhaiev.avtodiva.service.schedule;
 
-import com.polezhaiev.avtodiva.dto.instructor.InstructorCarMaxDate;
-import com.polezhaiev.avtodiva.dto.schedule.SlotGenerationRequestDto;
+import com.polezhaiev.avtodiva.dto.schedule.generation.InstructorCarMaxDateDto;
+import com.polezhaiev.avtodiva.dto.schedule.generation.SlotGenerationRequestDto;
 import com.polezhaiev.avtodiva.model.Car;
 import com.polezhaiev.avtodiva.model.Instructor;
 import com.polezhaiev.avtodiva.model.ScheduleSlot;
@@ -55,7 +55,7 @@ public class SlotGeneratorService {
                 .stream()
                 .collect(Collectors.toMap(
                         dto -> generateKey(dto.instructorId(), dto.carId()),
-                        InstructorCarMaxDate::maxDate
+                        InstructorCarMaxDateDto::maxDate
                 ));
 
         LocalDate rangeStart = maxDateMap.values().stream()

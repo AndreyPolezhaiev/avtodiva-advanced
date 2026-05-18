@@ -1,6 +1,6 @@
 package com.polezhaiev.avtodiva.repository;
 
-import com.polezhaiev.avtodiva.dto.instructor.InstructorCarMaxDate;
+import com.polezhaiev.avtodiva.dto.schedule.generation.InstructorCarMaxDateDto;
 import com.polezhaiev.avtodiva.model.Car;
 import com.polezhaiev.avtodiva.model.Instructor;
 import com.polezhaiev.avtodiva.model.ScheduleSlot;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,13 +29,6 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
 
     @EntityGraph(attributePaths = {"instructor", "car", "student"})
     Optional<ScheduleSlot> findSlotById(Long id);
-
-    boolean existsByDateAndStartTimeAndInstructorAndCar(
-            LocalDate date,
-            LocalTime startTime,
-            Instructor instructor,
-            Car car
-    );
 
     boolean existsByInstructorIdAndCarIdAndDateAndStartTime(
             Long instructorId,
@@ -77,15 +69,6 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
             @Param("startTime") LocalTime startTime,
             @Param("endTime") LocalTime endTime
     );
-
-    @Query("""
-       SELECT MAX(s.date)
-       FROM ScheduleSlot s
-       WHERE s.instructor = :instructor
-         AND s.car = :car
-         AND s.booked = false
-       """)
-    LocalDate findMaxFreeDateByInstructorAndCar(@Param("instructor") Instructor instructor, @Param("car") Car car);
 
     @Query("""
        SELECT s FROM ScheduleSlot s
@@ -134,14 +117,14 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
     List<ScheduleSlot> findAllByStudentId(Long studentId);
 
     @Query("""
-        SELECT new com.polezhaiev.avtodiva.dto.instructor.InstructorCarMaxDate(s.instructor.id, s.car.id, MAX(s.date))
+        SELECT new com.polezhaiev.avtodiva.dto.schedule.generation.InstructorCarMaxDate(s.instructor.id, s.car.id, MAX(s.date))
         FROM ScheduleSlot s
         WHERE s.booked = false
         AND s.instructor.id IN :instructorIds
         AND s.car.id IN :carIds
         GROUP BY s.instructor.id, s.car.id
     """)
-    List<InstructorCarMaxDate> findAllMaxDatesGrouped(List<Long> instructorIds, List<Long> carIds);
+    List<InstructorCarMaxDateDto> findAllMaxDatesGrouped(List<Long> instructorIds, List<Long> carIds);
 
     @Query("""
         SELECT s FROM ScheduleSlot s

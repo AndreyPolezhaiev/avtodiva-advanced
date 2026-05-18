@@ -1,4 +1,4 @@
-package com.polezhaiev.avtodiva.dto.schedule;
+package com.polezhaiev.avtodiva.dto.schedule.generation;
 
 import lombok.Data;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.polezhaiev.avtodiva.controller;
 
-import com.polezhaiev.avtodiva.dto.schedule.SlotGenerationRequestDto;
+import com.polezhaiev.avtodiva.dto.schedule.generation.SlotGenerationRequestDto;
 import com.polezhaiev.avtodiva.service.schedule.SlotGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
