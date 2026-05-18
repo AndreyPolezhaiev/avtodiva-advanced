@@ -117,7 +117,7 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
     List<ScheduleSlot> findAllByStudentId(Long studentId);
 
     @Query("""
-        SELECT new com.polezhaiev.avtodiva.dto.schedule.generation.InstructorCarMaxDate(s.instructor.id, s.car.id, MAX(s.date))
+        SELECT new com.polezhaiev.avtodiva.dto.schedule.generation.InstructorCarMaxDateDto(s.instructor.id, s.car.id, MAX(s.date))
         FROM ScheduleSlot s
         WHERE s.booked = false
         AND s.instructor.id IN :instructorIds
