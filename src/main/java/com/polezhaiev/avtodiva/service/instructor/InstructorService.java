@@ -56,10 +56,6 @@ public class InstructorService {
         InstructorDetailedResponseDto detailedResponseDto
                 = instructorMapper.toDetailedResponseDto(instructorFromRepo);
 
-        detailedResponseDto.setSlots(instructorFromRepo.getSlots().stream()
-                .map(scheduleSlotMapper::toResponseDto)
-                .toList());
-
         return detailedResponseDto;
     }
 

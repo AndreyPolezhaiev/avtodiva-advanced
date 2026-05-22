@@ -19,7 +19,7 @@ public class ScheduleTemplateController {
     private final ScheduleTemplateService scheduleTemplateService;
 
     @PostMapping
-    public ResponseEntity<ScheduleTemplateResponseDto> createScheduleTemplate(
+    public ResponseEntity<ScheduleTemplateResponseDto> createTemplate(
             @RequestBody @Valid ScheduleTemplateRequestDto requestDto) {
         ScheduleTemplateResponseDto response = scheduleTemplateService.save(requestDto);
 
