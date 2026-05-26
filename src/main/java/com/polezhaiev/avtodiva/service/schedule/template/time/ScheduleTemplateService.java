@@ -7,10 +7,12 @@ import com.polezhaiev.avtodiva.model.template.time.ScheduleTemplate;
 import com.polezhaiev.avtodiva.repository.ScheduleTemplateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ScheduleTemplateService {
     private final ScheduleTemplateRepository scheduleTemplateRepository;

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class StudentService {
     private final ScheduleSlotService scheduleSlotService;
@@ -74,7 +75,6 @@ public class StudentService {
                 .orElse(null);
     }
 
-    @Transactional
     public void deleteById(Long id) {
         Student studentFromRepo = studentRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Can't find student by id: " + id)

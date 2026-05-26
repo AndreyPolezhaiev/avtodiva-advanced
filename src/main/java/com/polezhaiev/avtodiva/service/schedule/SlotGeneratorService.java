@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class SlotGeneratorService {
     private static final String JOIN = "-";
@@ -29,7 +30,6 @@ public class SlotGeneratorService {
     private final CarRepository carRepository;
     private final InstructorRepository instructorRepository;
 
-    @Transactional
     public void addFreeWindowsForEachInstructor(SlotGenerationRequestDto requestDto) {
         int days = requestDto.getDays();
 

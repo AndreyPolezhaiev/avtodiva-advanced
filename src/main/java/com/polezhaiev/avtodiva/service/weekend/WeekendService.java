@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class WeekendService {
     private final WeekendRepository weekendRepository;
@@ -68,7 +69,6 @@ public class WeekendService {
         weekendRepository.delete(weekendFromRepo);
     }
 
-    @Transactional
     public WeekendResponseDto updateById(Long id, UpdateWeekendRequestDto requestDto) {
         Weekend weekendFromRepo = weekendRepository.findByIdWithInstructor(id).orElseThrow(
                 () -> new RuntimeException("Can't find weekend by id: " + id)

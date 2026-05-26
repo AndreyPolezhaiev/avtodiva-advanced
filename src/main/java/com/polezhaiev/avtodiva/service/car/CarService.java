@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class CarService {
     private final CarRepository carRepository;
@@ -46,7 +47,6 @@ public class CarService {
         return carMapper.toResponseDto(carFromRepo);
     }
 
-    @Transactional
     public void deleteById(Long id) {
         Car carFromRepo = carRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Can't find car by id: " + id)

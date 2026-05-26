@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ScheduleSlotService {
     private final ScheduleSlotRepository scheduleSlotRepository;
@@ -97,7 +98,6 @@ public class ScheduleSlotService {
         scheduleSlotRepository.save(scheduleSlotFromRepo);
     }
 
-    @Transactional
     public void clearSlotsByStudentId(Long studentId) {
         List<ScheduleSlot> forClearing = scheduleSlotRepository.findAllByStudentId(studentId);
 
@@ -111,7 +111,6 @@ public class ScheduleSlotService {
         scheduleSlotRepository.saveAll(forClearing);
     }
 
-    @Transactional
     public ScheduleSlotResponseDto updateById(Long id, UpdateScheduleSlotRequestDto requestDto) {
         ScheduleSlot existing = scheduleSlotRepository.findSlotById(id).orElseThrow(
                 () -> new IllegalArgumentException("Can't find slot by id: " + id)

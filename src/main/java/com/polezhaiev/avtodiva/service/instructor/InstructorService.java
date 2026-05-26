@@ -4,20 +4,22 @@ import com.polezhaiev.avtodiva.dto.instructor.CreateInstructorRequestDto;
 import com.polezhaiev.avtodiva.dto.instructor.InstructorDetailedResponseDto;
 import com.polezhaiev.avtodiva.dto.instructor.InstructorResponseDto;
 import com.polezhaiev.avtodiva.mapper.InstructorMapper;
-import com.polezhaiev.avtodiva.mapper.ScheduleSlotMapper;
 import com.polezhaiev.avtodiva.model.Instructor;
+import com.polezhaiev.avtodiva.model.template.time.ScheduleTemplate;
 import com.polezhaiev.avtodiva.repository.InstructorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class InstructorService {
     private final InstructorRepository instructorRepository;
     private final InstructorMapper instructorMapper;
-    private final ScheduleSlotMapper scheduleSlotMapper;
 
     public InstructorResponseDto save(CreateInstructorRequestDto requestDto) {
         if (instructorRepository.existsByNameIgnoreCase(requestDto.getName())) {
@@ -27,6 +29,9 @@ public class InstructorService {
         Instructor instructor = instructorMapper.toModel(requestDto);
         instructor.setSlots(new ArrayList<>());
         instructor.setWeekends(new ArrayList<>());
+
+        ScheduleTemplate scheduleTemplate = new ScheduleTemplate();
+        instructor.setScheduleTemplate(scheduleTemplate);
 
         Instructor savedInstructor = instructorRepository.save(instructor);
 
@@ -53,10 +58,7 @@ public class InstructorService {
                 () -> new RuntimeException("Can't find instructor by id: " + id)
         );
 
-        InstructorDetailedResponseDto detailedResponseDto
-                = instructorMapper.toDetailedResponseDto(instructorFromRepo);
-
-        return detailedResponseDto;
+        return instructorMapper.toDetailedResponseDto(instructorFromRepo);
     }
 
     public void deleteById(Long id) {
