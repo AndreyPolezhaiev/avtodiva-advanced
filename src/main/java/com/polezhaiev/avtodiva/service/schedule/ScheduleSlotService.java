@@ -13,6 +13,7 @@ import com.polezhaiev.avtodiva.repository.*;
 import com.polezhaiev.avtodiva.repository.spec.impl.ScheduleSlotSpecificationBuilder;
 import com.polezhaiev.avtodiva.service.schedule.util.ScheduleValidatorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,6 @@ public class ScheduleSlotService {
     private final ScheduleSlotSpecificationBuilder specificationBuilder;
 
     public ScheduleSlotResponseDto create(CreateScheduleSlotRequestDto requestDto) {
-        scheduleValidatorService.checkSlotExists(requestDto);
         scheduleValidatorService.checkScheduleConflicts(requestDto);
 
         Instructor instructor = instructorRepository.findById(requestDto.getInstructorId()).orElseThrow(
@@ -59,8 +59,14 @@ public class ScheduleSlotService {
 
     public List<ScheduleSlotResponseDto> searchSlots(SlotSearchParametersDto searchParameters) {
         Specification<ScheduleSlot> slotSpecification = specificationBuilder.build(searchParameters);
+        Sort sort = Sort.by(
+                Sort.Order.asc("date"),
+                Sort.Order.asc("startTime"),
+                Sort.Order.asc("instructor.name"),
+                Sort.Order.asc("car.name")
+        );
 
-        return scheduleSlotRepository.findAll(slotSpecification)
+        return scheduleSlotRepository.findAll(slotSpecification, sort)
                 .stream()
                 .map(scheduleSlotMapper::toResponseDto)
                 .toList();
@@ -116,7 +122,9 @@ public class ScheduleSlotService {
                 () -> new IllegalArgumentException("Can't find slot by id: " + id)
         );
 
-        scheduleValidatorService.checkScheduleConflictsExcluding(requestDto, existing.getId());
+        if (scheduleValidatorService.areKeyFieldsChanged(existing, requestDto)) {
+            scheduleValidatorService.checkScheduleConflictsExcluding(requestDto, existing.getId());
+        }
 
         Student student = null;
         if (requestDto.getStudentId() != null) {

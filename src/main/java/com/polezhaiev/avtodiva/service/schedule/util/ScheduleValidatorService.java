@@ -57,25 +57,6 @@ public class ScheduleValidatorService {
         }
     }
 
-    public void checkSlotExists(CreateScheduleSlotRequestDto requestDto) {
-        if (scheduleSlotRepository.existsByInstructorIdAndCarIdAndDateAndStartTime(
-                requestDto.getInstructorId(),
-                requestDto.getCarId(),
-                requestDto.getDate(),
-                requestDto.getStartTime()))
-        {
-            throw new IllegalStateException("Error: The slot by instructor id: "
-                    + requestDto.getInstructorId()
-                    + " and car id: "
-                    + requestDto.getCarId()
-                    + " and date: "
-                    + requestDto.getDate().toString()
-                    + " and time from "
-                    + requestDto.getStartTime().toString()
-                    + " already exists");
-        }
-    }
-
     /**
      * Checks if the key fields have changed
      *
@@ -83,10 +64,11 @@ public class ScheduleValidatorService {
      * @param requestDto
      * @return
      */
-    public boolean areKeyFieldsChanged(ScheduleSlot existing, CreateScheduleSlotRequestDto requestDto) {
+    public boolean areKeyFieldsChanged(ScheduleSlot existing, UpdateScheduleSlotRequestDto requestDto) {
         return !existing.getInstructor().getId().equals(requestDto.getInstructorId()) ||
                 !existing.getCar().getId().equals(requestDto.getCarId()) ||
                 !existing.getDate().equals(requestDto.getDate()) ||
-                !existing.getStartTime().equals(requestDto.getStartTime());
+                !existing.getStartTime().equals(requestDto.getStartTime()) ||
+                !existing.getEndTime().equals(requestDto.getEndTime());
     }
 }

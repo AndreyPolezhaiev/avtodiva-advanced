@@ -30,13 +30,6 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
     @EntityGraph(attributePaths = {"instructor", "car", "student"})
     Optional<ScheduleSlot> findSlotById(Long id);
 
-    boolean existsByInstructorIdAndCarIdAndDateAndStartTime(
-            Long instructorId,
-            Long carId,
-            LocalDate date,
-            LocalTime startTime
-    );
-
     @Query("""
     SELECT COUNT(s) > 0 FROM ScheduleSlot s
     WHERE (s.car.id = :carId OR s.instructor.id = :instructorId)

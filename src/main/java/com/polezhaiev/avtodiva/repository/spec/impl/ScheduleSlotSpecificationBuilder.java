@@ -32,6 +32,10 @@ public class ScheduleSlotSpecificationBuilder implements SpecificationBuilder<Sc
             ));
         }
 
+        if (Boolean.FALSE.equals(searchParameters.getBooked())) {
+            spec = spec.and(ScheduleTimeConflictSpecification.getSpecification());
+        }
+
         return spec;
     }
 }
