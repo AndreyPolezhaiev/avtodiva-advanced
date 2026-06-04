@@ -16,7 +16,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/schedule")
+@RequestMapping("/api/schedule")
 public class ScheduleSlotController {
     private final ScheduleSlotService scheduleSlotService;
 
