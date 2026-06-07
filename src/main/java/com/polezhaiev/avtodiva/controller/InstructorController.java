@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class InstructorController {
     private final InstructorMapper instructorMapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<InstructorResponseDto> createInstructor(
             @RequestBody @Valid CreateInstructorRequestDto requestDto) {
         InstructorResponseDto instructorResponseDto = instructorService.save(requestDto);
@@ -30,6 +32,7 @@ public class InstructorController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<InstructorResponseDto>> getAllInstructors() {
         List<InstructorResponseDto> allInstructors = instructorService.findAll();
 
@@ -37,6 +40,7 @@ public class InstructorController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<InstructorResponseDto> getInstructorById(@PathVariable Long id) {
         InstructorResponseDto instructorById = instructorService.findById(id);
 
@@ -44,6 +48,7 @@ public class InstructorController {
     }
 
     @GetMapping("/{id}/details")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<InstructorDetailedResponseDto> getDetailedInstructorById(@PathVariable Long id) {
         InstructorDetailedResponseDto instructorById = instructorService.findDetailedById(id);
 
@@ -51,6 +56,7 @@ public class InstructorController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<InstructorResponseDto> updateInstructorById(@PathVariable Long id,
                                                                           @RequestBody @Valid CreateInstructorRequestDto requestDto) {
         InstructorResponseDto instructorResponseDto = instructorService.updateById(id, requestDto);
@@ -59,6 +65,7 @@ public class InstructorController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteInstructorById(@PathVariable Long id) {
         instructorService.deleteById(id);

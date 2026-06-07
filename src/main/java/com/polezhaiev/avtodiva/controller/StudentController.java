@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class StudentController {
     private final StudentService studentService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<StudentResponseDto> createStudent(@RequestBody @Valid CreateStudentRequestDto requestDto) {
         StudentResponseDto studentResponseDto = studentService.save(requestDto);
 
@@ -28,6 +30,7 @@ public class StudentController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<StudentResponseDto>> getAllStudents() {
         List<StudentResponseDto> allStudents = studentService.findAll();
 
@@ -35,6 +38,7 @@ public class StudentController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<StudentResponseDto>> searchStudents(StudentSearchParametersDto searchParameters) {
         List<StudentResponseDto> response = studentService.searchStudents(searchParameters);
 
@@ -42,6 +46,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<StudentResponseDto> getStudentById(@PathVariable Long id) {
         StudentResponseDto studentById = studentService.findById(id);
 
@@ -49,12 +54,14 @@ public class StudentController {
     }
 
     @GetMapping("/byPhone")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<StudentResponseDto> findStudentByPhoneNumber(@RequestParam String phoneNumber) {
         StudentResponseDto studentByPhoneNumber = studentService.findByPhoneNumber(phoneNumber);
         return ResponseEntity.ok(studentByPhoneNumber);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<StudentResponseDto> updateStudentById(@PathVariable Long id,
                                                                 @RequestBody @Valid UpdateStudentRequestDto requestDto) {
         StudentResponseDto studentResponseDto = studentService.updateById(id, requestDto);
@@ -63,6 +70,7 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteStudentById(@PathVariable Long id) {
         studentService.deleteById(id);

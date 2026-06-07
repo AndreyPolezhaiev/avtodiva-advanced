@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class CarController {
     private final CarService carService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CarResponseDto> createCar(@RequestBody @Valid CreateCarRequestDto requestDto) {
         CarResponseDto carResponseDto = carService.save(requestDto);
 
@@ -27,6 +29,7 @@ public class CarController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CarResponseDto>> getAllCars() {
         List<CarResponseDto> allCars = carService.findAll();
 
@@ -34,6 +37,7 @@ public class CarController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CarResponseDto> getCarById(@PathVariable Long id) {
         CarResponseDto carById = carService.findById(id);
 
@@ -41,6 +45,7 @@ public class CarController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CarResponseDto> updateCarById(@PathVariable Long id,
                                                         @RequestBody @Valid CreateCarRequestDto requestDto) {
         CarResponseDto carResponseDto = carService.updateById(id, requestDto);
@@ -49,6 +54,7 @@ public class CarController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCarById(@PathVariable Long id) {
         carService.deleteById(id);

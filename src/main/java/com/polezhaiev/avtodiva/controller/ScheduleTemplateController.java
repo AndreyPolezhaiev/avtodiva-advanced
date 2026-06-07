@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class ScheduleTemplateController {
     private final ScheduleTemplateService scheduleTemplateService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ScheduleTemplateResponseDto> createTemplate(
             @RequestBody @Valid ScheduleTemplateRequestDto requestDto) {
         ScheduleTemplateResponseDto response = scheduleTemplateService.save(requestDto);
@@ -27,6 +29,7 @@ public class ScheduleTemplateController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ScheduleTemplateResponseDto>> getAllTemplates() {
         List<ScheduleTemplateResponseDto> response = scheduleTemplateService.findAll();
 
@@ -34,6 +37,7 @@ public class ScheduleTemplateController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ScheduleTemplateResponseDto> updateTemplateById(
             @PathVariable Long id,
             @RequestBody @Valid ScheduleTemplateRequestDto requestDto) {
@@ -44,6 +48,7 @@ public class ScheduleTemplateController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTemplateById(@PathVariable Long id) {
         scheduleTemplateService.deleteById(id);

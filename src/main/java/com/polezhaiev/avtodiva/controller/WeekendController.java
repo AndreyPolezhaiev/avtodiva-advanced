@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class WeekendController {
     private final WeekendMapper weekendMapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<WeekendResponseDto>> createWeekend(@RequestBody @Valid List<CreateWeekendRequestDto> requestDto) {
         List<WeekendResponseDto> weekendResponseDto = weekendService.saveAll(requestDto);
 
@@ -32,6 +34,7 @@ public class WeekendController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<WeekendResponseDto>> searchWeekends(WeekendSearchParametersDto searchParameters) {
         List<WeekendResponseDto> response = weekendService.searchWeekends(searchParameters);
 
@@ -39,6 +42,7 @@ public class WeekendController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<WeekendResponseDto> getWeekendById(@PathVariable Long id) {
         WeekendResponseDto weekendById = weekendService.findById(id);
 
@@ -46,6 +50,7 @@ public class WeekendController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<WeekendResponseDto> updateWeekendById(@PathVariable Long id,
                                                                 @RequestBody @Valid UpdateWeekendRequestDto requestDto) {
         WeekendResponseDto weekendResponseDto = weekendService.updateById(id, requestDto);
@@ -54,6 +59,7 @@ public class WeekendController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteWeekendById(@PathVariable Long id) {
         weekendService.deleteById(id);

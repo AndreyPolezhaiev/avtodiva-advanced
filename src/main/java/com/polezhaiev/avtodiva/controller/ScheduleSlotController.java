@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ScheduleSlotController {
     private final ScheduleSlotService scheduleSlotService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ScheduleSlotResponseDto> createSlot(@RequestBody @Valid CreateScheduleSlotRequestDto requestDto) {
         ScheduleSlotResponseDto response = scheduleSlotService.create(requestDto);
 
@@ -28,6 +30,7 @@ public class ScheduleSlotController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ScheduleSlotResponseDto>> searchSlots(@Valid SlotSearchParametersDto requestDto) {
         List<ScheduleSlotResponseDto> response = scheduleSlotService.searchSlots(requestDto);
 
@@ -35,6 +38,7 @@ public class ScheduleSlotController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ScheduleSlotResponseDto> getSlotById(@PathVariable Long id) {
         ScheduleSlotResponseDto response = scheduleSlotService.findById(id);
 
@@ -42,6 +46,7 @@ public class ScheduleSlotController {
     }
 
     @GetMapping("/last-booked")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ScheduleSlotResponseDto> findLastBookedByStudentId(@RequestParam Long studentId) {
         ScheduleSlotResponseDto response = scheduleSlotService.findLastBookedByStudentId(studentId);
 
@@ -49,6 +54,7 @@ public class ScheduleSlotController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ScheduleSlotResponseDto> updateSlotById(@PathVariable Long id,
                                                                   @RequestBody @Valid UpdateScheduleSlotRequestDto requestDto) {
         ScheduleSlotResponseDto response = scheduleSlotService.updateById(id, requestDto);
@@ -57,6 +63,7 @@ public class ScheduleSlotController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSlotById(@PathVariable Long id) {
         scheduleSlotService.deleteById(id);
