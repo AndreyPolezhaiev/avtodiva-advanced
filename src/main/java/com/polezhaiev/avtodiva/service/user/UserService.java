@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
@@ -26,7 +27,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    @Transactional
     public void register(UserRegistrationRequestDto requestDto) {
         if (userRepository.findByEmail(requestDto.getEmail()).isPresent()) {
             throw new RuntimeException("User with this email already exists: " + requestDto.getEmail());
@@ -46,7 +46,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional
     public void updateUserRoles(Long userId, UpdateUserRolesRequestDto requestDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
@@ -66,5 +65,13 @@ public class UserService {
                 .stream()
                 .map(userMapper::toResponseDto)
                 .toList();
+    }
+
+    public void deleteById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("There is no registered user by id: " + id)
+        );
+
+        userRepository.delete(user);
     }
 }
