@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -14,6 +16,8 @@ import java.util.List;
 @Setter
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@SQLDelete(sql = "UPDATE schedule_template SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 public class ScheduleTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "schedule_template_seq_gen")
@@ -33,4 +37,7 @@ public class ScheduleTemplate {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<TimeSlot> intervals;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 }

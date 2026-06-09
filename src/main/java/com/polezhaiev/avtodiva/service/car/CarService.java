@@ -5,7 +5,9 @@ import com.polezhaiev.avtodiva.dto.car.CreateCarRequestDto;
 import com.polezhaiev.avtodiva.mapper.CarMapper;
 import com.polezhaiev.avtodiva.model.Car;
 import com.polezhaiev.avtodiva.repository.CarRepository;
+import com.polezhaiev.avtodiva.service.schedule.ScheduleSlotService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +16,10 @@ import java.util.List;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CarService {
     private final CarRepository carRepository;
+    private final ScheduleSlotService scheduleSlotService;
     private final CarMapper carMapper;
 
     public CarResponseDto save(CreateCarRequestDto requestDto) {
@@ -51,6 +54,8 @@ public class CarService {
         Car carFromRepo = carRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Can't find car by id: " + id)
         );
+
+        scheduleSlotService.deleteSlotsByCarId(id);
 
         carRepository.delete(carFromRepo);
     }

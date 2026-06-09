@@ -7,7 +7,9 @@ import com.polezhaiev.avtodiva.mapper.InstructorMapper;
 import com.polezhaiev.avtodiva.model.Instructor;
 import com.polezhaiev.avtodiva.model.template.time.ScheduleTemplate;
 import com.polezhaiev.avtodiva.repository.InstructorRepository;
+import com.polezhaiev.avtodiva.service.schedule.ScheduleSlotService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +18,11 @@ import java.util.List;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InstructorService {
     private final InstructorRepository instructorRepository;
     private final InstructorMapper instructorMapper;
+    private final ScheduleSlotService scheduleSlotService;
 
     public InstructorResponseDto save(CreateInstructorRequestDto requestDto) {
         if (instructorRepository.existsByNameIgnoreCase(requestDto.getName())) {
@@ -65,6 +68,8 @@ public class InstructorService {
         Instructor instructorFromRepo = instructorRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Can't find instructor by id: " + id)
         );
+
+        scheduleSlotService.deleteSlotsByInstructorId(id);
 
         instructorRepository.delete(instructorFromRepo);
     }

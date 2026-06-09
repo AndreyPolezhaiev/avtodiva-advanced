@@ -4,7 +4,7 @@ import com.polezhaiev.avtodiva.config.MapperConfig;
 import com.polezhaiev.avtodiva.dto.user.UserRegistrationRequestDto;
 import com.polezhaiev.avtodiva.dto.user.UserResponseDto;
 import com.polezhaiev.avtodiva.model.auth.Role;
-import com.polezhaiev.avtodiva.model.auth.RoleResponseDto;
+import com.polezhaiev.avtodiva.dto.role.RoleResponseDto;
 import com.polezhaiev.avtodiva.model.auth.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

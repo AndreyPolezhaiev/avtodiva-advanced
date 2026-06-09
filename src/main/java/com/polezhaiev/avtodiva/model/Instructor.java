@@ -6,6 +6,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import java.util.List;
 
 @Entity
@@ -13,6 +16,8 @@ import java.util.List;
 @Getter @Setter
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@SQLDelete(sql = "UPDATE instructors SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 public class Instructor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +26,7 @@ public class Instructor {
     private Long id;
 
     @ToString.Include
+    @Column(nullable = false)
     private String name;
 
     @OneToMany(
@@ -50,4 +56,7 @@ public class Instructor {
     )
     @JoinColumn(name = "schedule_template_id")
     private ScheduleTemplate scheduleTemplate;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 }

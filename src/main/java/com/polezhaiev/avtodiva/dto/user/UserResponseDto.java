@@ -1,6 +1,6 @@
 package com.polezhaiev.avtodiva.dto.user;
 
-import com.polezhaiev.avtodiva.model.auth.RoleResponseDto;
+import com.polezhaiev.avtodiva.dto.role.RoleResponseDto;
 import lombok.Data;
 
 import java.util.List;

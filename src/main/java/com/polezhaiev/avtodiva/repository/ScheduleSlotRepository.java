@@ -5,10 +5,7 @@ import com.polezhaiev.avtodiva.model.Car;
 import com.polezhaiev.avtodiva.model.Instructor;
 import com.polezhaiev.avtodiva.model.ScheduleSlot;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -63,39 +60,6 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
             @Param("endTime") LocalTime endTime
     );
 
-    @Query("""
-       SELECT s FROM ScheduleSlot s
-       JOIN FETCH s.instructor i
-       JOIN FETCH s.car c
-       WHERE s.booked = false
-         AND LOWER(i.name) = LOWER(:instructor)
-         AND LOWER(c.name) = LOWER(:car)
-         AND s.date >= :fromDate
-       """)
-    List<ScheduleSlot> findFreeSlotsFromDate(
-            @Param("instructor") String instructor,
-            @Param("car") String car,
-            @Param("fromDate") LocalDate fromDate
-    );
-
-    @EntityGraph(attributePaths = {"instructor", "car"})
-    @Query("""
-       SELECT s FROM ScheduleSlot s
-       WHERE s.booked = false
-       """)
-    List<ScheduleSlot> findAllFreeSlots();
-
-    @EntityGraph(attributePaths = {"instructor", "car"})
-    @Query("""
-       SELECT s FROM ScheduleSlot s
-       JOIN FETCH s.instructor i
-       WHERE s.booked = false
-         AND LOWER(i.name) = LOWER(:instructor)
-       """)
-    List<ScheduleSlot> findAllFreeSlotsByInstructorName(
-            @Param("instructor") String instructor
-    );
-
     @EntityGraph(attributePaths = {"instructor", "car"})
     @Query("""
        SELECT s FROM ScheduleSlot s
@@ -106,8 +70,24 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
        """)
     Optional<ScheduleSlot> findLastBookedStudentSlot(Long studentId);
 
-    @EntityGraph(attributePaths = {"instructor", "car", "student"})
-    List<ScheduleSlot> findAllByStudentId(Long studentId);
+    @Modifying(clearAutomatically = true)
+    @Query("""
+    UPDATE ScheduleSlot s
+    SET s.student = null,
+        s.description = null,
+        s.link = null,
+        s.booked = false
+    WHERE s.student.id = :studentId
+    """)
+    void releaseAllSlotsByStudentId(@Param("studentId") Long studentId);
+
+    @Modifying
+    @Query("UPDATE ScheduleSlot s SET s.isDeleted = true WHERE s.car.id = :carId")
+    void softDeleteAllByCarId(@Param("carId") Long carId);
+
+    @Modifying
+    @Query("UPDATE ScheduleSlot s SET s.isDeleted = true WHERE s.instructor.id = :instructorId")
+    void softDeleteAllByInstructorId(@Param("instructorId") Long instructorId);
 
     @Query("""
         SELECT new com.polezhaiev.avtodiva.dto.schedule.generation.InstructorCarMaxDateDto(s.instructor.id, s.car.id, MAX(s.date))

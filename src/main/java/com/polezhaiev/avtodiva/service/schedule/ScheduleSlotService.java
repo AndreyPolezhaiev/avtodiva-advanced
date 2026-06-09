@@ -104,17 +104,16 @@ public class ScheduleSlotService {
         scheduleSlotRepository.save(scheduleSlotFromRepo);
     }
 
+    public void deleteSlotsByCarId(Long carId) {
+        scheduleSlotRepository.softDeleteAllByCarId(carId);
+    }
+
+    public void deleteSlotsByInstructorId(Long instructorId) {
+        scheduleSlotRepository.softDeleteAllByInstructorId(instructorId);
+    }
+
     public void clearSlotsByStudentId(Long studentId) {
-        List<ScheduleSlot> forClearing = scheduleSlotRepository.findAllByStudentId(studentId);
-
-        for (ScheduleSlot slot: forClearing) {
-            slot.setStudent(null);
-            slot.setDescription(null);
-            slot.setLink(null);
-            slot.setBooked(false);
-        }
-
-        scheduleSlotRepository.saveAll(forClearing);
+        scheduleSlotRepository.releaseAllSlotsByStudentId(studentId);
     }
 
     public ScheduleSlotResponseDto updateById(Long id, UpdateScheduleSlotRequestDto requestDto) {

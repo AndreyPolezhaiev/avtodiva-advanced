@@ -12,4 +12,6 @@ import java.util.Optional;
 @Repository
 public interface InstructorRepository extends JpaRepository<Instructor, Long> {
     boolean existsByNameIgnoreCase(String name);
+
+    Instructor findByScheduleTemplateId(Long scheduleTemplateId);
 }
