@@ -1,0 +1,86 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260611-07-create-schedule-slots-table
+      author: polezhaiev
+      changes:
+        - createSequence:
+            sequenceName: schedule_slot_id_sequence
+            incrementBy: 50
+        - createTable:
+            tableName: schedule_slots
+            columns:
+              - column: { name: id, type: bigint, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: date, type: date, constraints: { nullable: false } }
+              - column: { name: start_time, type: time, constraints: { nullable: false } }
+              - column: { name: end_time, type: time, constraints: { nullable: false } }
+              - column: { name: instructor_id, type: bigint }
+              - column: { name: car_id, type: bigint }
+              - column: { name: student_id, type: bigint }
+              - column: { name: description, type: varchar(255) }
+              - column: { name: link, type: varchar(255) }
+              - column: { name: booked, type: boolean }
+              - column: { name: is_deleted, type: boolean, defaultValueBoolean: false, constraints: { nullable: false } }
+
+        - addForeignKeyConstraint:
+            baseTableName: schedule_slots
+            baseColumnNames: instructor_id
+            referencedTableName: instructors
+            referencedColumnNames: id
+            constraintName: fk_slots_instructor
+        - addForeignKeyConstraint:
+            baseTableName: schedule_slots
+            baseColumnNames: car_id
+            referencedTableName: cars
+            referencedColumnNames: id
+            constraintName: fk_slots_car
+        - addForeignKeyConstraint:
+            baseTableName: schedule_slots
+            baseColumnNames: student_id
+            referencedTableName: students
+            referencedColumnNames: id
+            onDelete: SET NULL
+            constraintName: fk_slots_student
+
+  - changeSet:
+      id: 20260611-08-create-partial-indexes-for-slots
+      author: polezhaiev
+      changes:
+        - createIndex:
+            indexName: idx_instructor_date_active
+            tableName: schedule_slots
+            columns:
+              - column: { name: instructor_id }
+              - column: { name: date }
+            where: "is_deleted = false"
+
+        - createIndex:
+            indexName: idx_student_id_active
+            tableName: schedule_slots
+            columns:
+              - column: { name: student_id }
+            where: "is_deleted = false"
+
+        - createIndex:
+            indexName: idx_car_date_active
+            tableName: schedule_slots
+            columns:
+              - column: { name: car_id }
+              - column: { name: date }
+            where: "is_deleted = false"
+
+        - createIndex:
+            indexName: idx_date_time_from_to_active
+            tableName: schedule_slots
+            columns:
+              - column: { name: date }
+              - column: { name: start_time }
+              - column: { name: end_time }
+            where: "is_deleted = false"
+
+        - createIndex:
+            indexName: idx_booked_instructor_active
+            tableName: schedule_slots
+            columns:
+              - column: { name: booked }
+              - column: { name: instructor_id }
+            where: "is_deleted = false"

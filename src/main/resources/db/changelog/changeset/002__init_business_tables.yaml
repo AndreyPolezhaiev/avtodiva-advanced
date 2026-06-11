@@ -1,0 +1,81 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260611-04-create-cars-and-students
+      author: polezhaiev
+      changes:
+        - createTable:
+            tableName: cars
+            columns:
+              - column: { name: id, type: bigint, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: name, type: varchar(255), constraints: { nullable: false } }
+              - column: { name: is_deleted, type: boolean, defaultValueBoolean: false, constraints: { nullable: false } }
+        - createTable:
+            tableName: students
+            columns:
+              - column: { name: id, type: bigint, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: name, type: varchar(255), constraints: { nullable: false } }
+              - column: { name: phone_number, type: varchar(255), constraints: { unique: true, nullable: false } }
+              - column: { name: is_deleted, type: boolean, defaultValueBoolean: false, constraints: { nullable: false } }
+
+  - changeSet:
+      id: 20260611-05-create-schedule-template-and-slots
+      author: polezhaiev
+      changes:
+        - createSequence:
+            sequenceName: schedule_template_id_seq
+            incrementBy: 20
+        - createTable:
+            tableName: schedule_template
+            columns:
+              - column: { name: id, type: bigint, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: is_deleted, type: boolean, defaultValueBoolean: false, constraints: { nullable: false } }
+        # Embeddable коллекция интервалов хранится в этой же SRP-миграции
+        - createTable:
+            tableName: template_time_slots
+            columns:
+              - column: { name: template_id, type: bigint, constraints: { nullable: false } }
+              - column: { name: start_time, type: time }
+              - column: { name: end_time, type: time }
+        - addForeignKeyConstraint:
+            baseTableName: template_time_slots
+            baseColumnNames: template_id
+            referencedTableName: schedule_template
+            referencedColumnNames: id
+            constraintName: fk_template_slots_template
+
+  - changeSet:
+      id: 20260611-06-create-instructors-and-weekends
+      author: polezhaiev
+      changes:
+        - createTable:
+            tableName: instructors
+            columns:
+              - column: { name: id, type: bigint, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: name, type: varchar(255), constraints: { nullable: false } }
+              - column: { name: schedule_template_id, type: bigint }
+              - column: { name: is_deleted, type: boolean, defaultValueBoolean: false, constraints: { nullable: false } }
+        - addForeignKeyConstraint:
+            baseTableName: instructors
+            baseColumnNames: schedule_template_id
+            referencedTableName: schedule_template
+            referencedColumnNames: id
+            constraintName: fk_instructor_template
+
+        - createSequence:
+            sequenceName: weekend_id_seq
+            incrementBy: 20
+        - createTable:
+            tableName: weekends
+            columns:
+              - column: { name: id, type: bigint, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: date, type: date, constraints: { nullable: false } }
+              - column: { name: start_time, type: time, constraints: { nullable: false } }
+              - column: { name: end_time, type: time, constraints: { nullable: false } }
+              - column: { name: instructor_id, type: bigint, constraints: { nullable: false } }
+              - column: { name: is_deleted, type: boolean, defaultValueBoolean: false, constraints: { nullable: false } }
+        - addForeignKeyConstraint:
+            baseTableName: weekends
+            baseColumnNames: instructor_id
+            referencedTableName: instructors
+            referencedColumnNames: id
+            constraintName: fk_weekends_instructor

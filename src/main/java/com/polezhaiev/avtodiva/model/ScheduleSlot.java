@@ -12,13 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "schedule_slots", indexes = {
-        @Index(name = "idx_instructor_date", columnList = "instructor_id, date"),
-        @Index(name = "idx_student_id", columnList = "student_id"),
-        @Index(name = "idx_car_date", columnList = "car_id, date"),
-        @Index(name = "idx_date_time_from_to", columnList = "date, start_time, end_time"),
-        @Index(name = "idx_booked_instructor", columnList = "booked, instructor_id")
-})
+@Table(name = "schedule_slots")
 @Data
 @SQLDelete(sql = "UPDATE schedule_slots SET is_deleted = true WHERE id = ?")
 @SQLRestriction("is_deleted = false")

@@ -1,5 +1,7 @@
 package com.polezhaiev.avtodiva.security;
 
+import com.polezhaiev.avtodiva.model.auth.User;
+import com.polezhaiev.avtodiva.model.auth.CustomUserDetails;
 import com.polezhaiev.avtodiva.repository.auth.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +16,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        return new CustomUserDetails(user);
     }
 }
