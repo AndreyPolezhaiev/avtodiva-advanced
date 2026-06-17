@@ -18,9 +18,9 @@ services:
         "spring.jpa.properties.hibernate.show_sql" : "false",
         "spring.jpa.properties.hibernate.format_sql" : "false",
         "logging.level.org.hibernate.SQL" : "OFF",
-        "logging.level.org.hibernate.stat" : "DEBUG",
+        "logging.level.org.hibernate.stat" : "OFF",
         "spring.jpa.properties.hibernate.jdbc.batch_size" : "${BATCH_SIZE}",
         "spring.jpa.properties.hibernate.order_inserts" : "true",
         "spring.jpa.properties.hibernate.order_updates" : "true",
-        "spring.jpa.properties.hibernate.generate_statistics" : "true",
+        "spring.jpa.properties.hibernate.generate_statistics" : "false"
       }'
