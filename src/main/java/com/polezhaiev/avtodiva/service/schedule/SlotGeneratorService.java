@@ -35,8 +35,8 @@ public class SlotGeneratorService {
 
         List<Instructor> instructors =
                 (requestDto.getInstructorIds() == null || requestDto.getInstructorIds().isEmpty())
-                    ? instructorRepository.findAll()
-                    : instructorRepository.findAllById(requestDto.getInstructorIds());
+                    ? instructorRepository.findAllWithIntervals()
+                    : instructorRepository.findAllWithIntervalsById(requestDto.getInstructorIds());
 
         List<Car> cars = (requestDto.getCarIds() == null || requestDto.getCarIds().isEmpty())
                 ? carRepository.findAll()

@@ -29,7 +29,6 @@ databaseChangeLog:
             columns:
               - column: { name: id, type: bigint, constraints: { primaryKey: true, nullable: false } }
               - column: { name: is_deleted, type: boolean, defaultValueBoolean: false, constraints: { nullable: false } }
-        # Embeddable коллекция интервалов хранится в этой же SRP-миграции
         - createTable:
             tableName: template_time_slots
             columns:
