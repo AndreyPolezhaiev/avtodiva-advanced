@@ -1,12 +1,9 @@
 # Avtodiva Advanced (Full-Stack ERP)
 
----
-
 ## 💡Overview
 
 This project represents a complete architectural transition from a legacy [Java Swing desktop client](https://github.com/AndreyPolezhaiev/avtodiva) to a modern web ecosystem. It is designed to handle school management operations with a focus on security, scalability, and maintainability.
 
----
 
 ## 🛠 Tech Stack
 
@@ -15,7 +12,6 @@ This project represents a complete architectural transition from a legacy [Java 
 * **Database:** PostgreSQL (Neon), Liquibase.
 * **Infrastructure:** Docker, Nginx (Reverse Proxy & SSL termination), Linux (Hetzner).
 
----
 
 ## 🏗 Architecture Highlights
 
@@ -23,7 +19,6 @@ This project represents a complete architectural transition from a legacy [Java 
 * **Secure Deployment:** Automated production environment setup using Docker and Nginx, ensuring secure traffic routing.
 * **Data Integrity:** Versioned database management via Liquibase to handle schema evolution seamlessly.
 
----
 
 ## 📂 Project Structure
 
@@ -31,14 +26,12 @@ This project represents a complete architectural transition from a legacy [Java 
 * `src/main/resources/...`: Configuration and migration files.
 * `docker-compose.yml`: Infrastructure orchestration.
 
----
 
 ## 🚀 How to Run
 1. Clone the repository: `git clone https://github.com/AndreyPolezhaiev/avtodiva-advanced`
 2. Configure your `.env` file.
 3. Run with Docker: `docker-compose up --build`
 
----
 
 ## 🔗 Related Projects
 
