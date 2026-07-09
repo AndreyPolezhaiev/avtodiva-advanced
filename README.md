@@ -29,7 +29,7 @@ This project represents a complete architectural transition from a legacy [Java 
 
 
 ## 🚀 How to Run
-1. Clone the repository: `git clone https://github.com/AndreyPolezhaiev/avtodiva-advanced`
+1. Clone the repository: `git clone https://github.com/AndreyPolezhaiev/avtodiva-advanced.git`
 2. Configure your `.env` file.
 3. Run with Docker: `docker-compose up --build`
 
