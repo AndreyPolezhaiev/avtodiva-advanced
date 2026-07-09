@@ -37,6 +37,7 @@ This project represents a complete architectural transition from a legacy [Java 
 ## 🔗 Related Projects
 
 * **Frontend Repository:** [AndreyPolezhaiev/avtodiva-frontend](https://github.com/AndreyPolezhaiev/avtodiva-frontend)
+* **Gateway Repository:** [AndreyPolezhaiev/avtodiva-gateway](https://github.com/AndreyPolezhaiev/avtodiva-gateway)
 
 ---
 
