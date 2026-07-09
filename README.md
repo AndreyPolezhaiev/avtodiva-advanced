@@ -1,4 +1,4 @@
-# Avtodiva Advanced (Full-Stack ERP)
+# Avtodiva Backend (ERP for Driving Schools)
 
 
 ## 💡Overview
@@ -9,7 +9,7 @@ This project represents a complete architectural transition from a legacy [Java 
 ## 🛠 Tech Stack
 
 * **Backend:** Java 21, Spring Boot, Spring Security (JWT authentication).
-* **Frontend:** Angular, TypeScript, HTML5, SCSS.
+* **API:** Exposes the REST API for [frontend](https://github.com/AndreyPolezhaiev/avtodiva-frontend).
 * **Database:** PostgreSQL (Neon), Liquibase.
 * **Infrastructure:** Docker, Nginx (Reverse Proxy & SSL termination), Linux (Hetzner).
 
