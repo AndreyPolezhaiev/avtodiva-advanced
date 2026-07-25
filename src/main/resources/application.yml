@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: dev
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: ${BATCH_SIZE}
+        order_inserts: true
+        order_updates: true
+  datasource:
+    hikari:
+      maximum-pool-size: 2
+      minimum-idle: 1
+      idle-timeout: 60000
