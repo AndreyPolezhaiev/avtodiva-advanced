@@ -1,0 +1,22 @@
+name: CI
+
+on: push
+
+jobs:
+  test-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Test
+        run: mvn test
+
+  build-and-deploy-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build Docker Image
+        run: docker build -t andreypolezhaiev/avtodiva-backend:latest .
+      - name: Deploy Simulation
+        run: echo "Pipeline works successfully!"
