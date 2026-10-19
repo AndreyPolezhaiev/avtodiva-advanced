@@ -50,6 +50,16 @@ public class ScheduleSlotService {
         newSlot.setCar(car);
         newSlot.setStudent(student);
         newSlot.setBooked(true);
+
+        // the new lesson replaces free slots of the same instructor and car at this time
+        scheduleSlotRepository.softDeleteOverlappingFreeSlots(
+                requestDto.getInstructorId(),
+                requestDto.getCarId(),
+                requestDto.getDate(),
+                requestDto.getStartTime(),
+                requestDto.getEndTime(),
+                null
+        );
         ScheduleSlot saved = scheduleSlotRepository.save(newSlot);
 
         ScheduleSlotResponseDto responseDto = scheduleSlotMapper.toResponseDto(saved);
