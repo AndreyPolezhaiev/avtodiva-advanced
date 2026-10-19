@@ -81,6 +81,26 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, Long
     """)
     void releaseAllSlotsByStudentId(@Param("studentId") Long studentId);
 
+    @Modifying(flushAutomatically = true)
+    @Query("""
+    UPDATE ScheduleSlot s SET s.isDeleted = true
+    WHERE s.instructor.id = :instructorId
+      AND s.car.id = :carId
+      AND s.date = :date
+      AND s.booked = false
+      AND s.startTime < :endTime
+      AND s.endTime > :startTime
+      AND (:excludeId IS NULL OR s.id <> :excludeId)
+    """)
+    void softDeleteOverlappingFreeSlots(
+            @Param("instructorId") Long instructorId,
+            @Param("carId") Long carId,
+            @Param("date") LocalDate date,
+            @Param("startTime") LocalTime startTime,
+            @Param("endTime") LocalTime endTime,
+            @Param("excludeId") Long excludeId
+    );
+
     @Modifying
     @Query("UPDATE ScheduleSlot s SET s.isDeleted = true WHERE s.car.id = :carId")
     void softDeleteAllByCarId(@Param("carId") Long carId);
