@@ -6,7 +6,6 @@ import com.polezhaiev.avtodiva.dto.instructor.InstructorDetailedResponseDto;
 import com.polezhaiev.avtodiva.dto.instructor.InstructorResponseDto;
 import com.polezhaiev.avtodiva.model.Instructor;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(config = MapperConfig.class, uses = {WeekendMapper.class})
 public interface InstructorMapper {
