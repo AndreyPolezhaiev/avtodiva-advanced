@@ -1,6 +1,5 @@
 package com.polezhaiev.avtodiva.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.polezhaiev.avtodiva.dto.schedule.event.ScheduleSlotEventDto;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -12,7 +11,8 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,12 +25,13 @@ public class AnalyticsKafkaProducerConfig {
 
     @Bean
     public ProducerFactory<String, ScheduleSlotEventDto> producerFactory(
-            ObjectMapper objectMapper
+            JsonMapper jsonMapper
     ) {
         Map<String, Object> configProperties = new HashMap<>();
         configProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        configProperties.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, 5000);
 
-        JsonSerializer<ScheduleSlotEventDto> serializer = new JsonSerializer<>(objectMapper);
+        JacksonJsonSerializer<ScheduleSlotEventDto> serializer = new JacksonJsonSerializer<>(jsonMapper);
         serializer.setAddTypeInfo(false);
 
         return new DefaultKafkaProducerFactory<>(

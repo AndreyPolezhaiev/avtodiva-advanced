@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20261020-09-add-lesson-price-to-cars
+      author: polezhaiev
+      changes:
+        - addColumn:
+            tableName: cars
+            columns:
+              - column: { name: lesson_price, type: "numeric(10,2)", defaultValueNumeric: 0, constraints: { nullable: false } }
+        - sql:
+            sql: ALTER TABLE cars ADD CONSTRAINT chk_cars_lesson_price_non_negative CHECK (lesson_price >= 0)
+      rollback:
+        - sql:
+            sql: ALTER TABLE cars DROP CONSTRAINT chk_cars_lesson_price_non_negative
+        - dropColumn:
+            tableName: cars
+            columnName: lesson_price

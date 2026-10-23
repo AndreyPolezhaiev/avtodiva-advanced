@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -20,6 +21,9 @@ public class Car {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(name = "lesson_price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal lessonPrice;
 
     @ToString.Exclude
     @OneToMany(

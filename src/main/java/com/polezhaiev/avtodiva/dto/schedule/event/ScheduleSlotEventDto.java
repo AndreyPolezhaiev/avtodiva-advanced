@@ -2,6 +2,7 @@ package com.polezhaiev.avtodiva.dto.schedule.event;
 
 import com.polezhaiev.avtodiva.model.event.SlotEventType;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -10,15 +11,17 @@ public record ScheduleSlotEventDto(
     String eventId,
     SlotEventType slotEventType,
     Instant timestamp,
-    
+
     Long slotId,
     LocalDate date,
     LocalTime startTime,
     LocalTime endTime,
-    
-    Long instructorId,
-    Long carId,
-    Long studentId,
-    
+
+    String instructorName,
+    String carName,
+    String studentName,
+
+    BigDecimal lessonPrice,
+
     Boolean booked
 ) {}

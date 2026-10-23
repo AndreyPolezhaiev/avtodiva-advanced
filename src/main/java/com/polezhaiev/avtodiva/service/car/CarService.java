@@ -66,6 +66,7 @@ public class CarService {
         );
 
         carFromRepo.setName(requestDto.getName());
+        carFromRepo.setLessonPrice(requestDto.getLessonPrice());
 
         Car updatedCar = carRepository.save(carFromRepo);
 
