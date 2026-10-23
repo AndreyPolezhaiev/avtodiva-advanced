@@ -2,7 +2,7 @@ services:
   backend-app:
     restart: unless-stopped
     container_name: avtodiva-backend
-    image: andreypolezhaiev/avtodiva-backend:latest
+    image: ghcr.io/andreypolezhaiev/avtodiva-backend:latest
     env_file:
       - .env
     ports:
