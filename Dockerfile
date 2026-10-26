@@ -7,15 +7,15 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 
 RUN mvn clean package -DskipTests
-RUN java -Djarmode=layertools -jar target/*.jar extract
+RUN java -Djarmode=tools -jar target/*.jar extract --layers --launcher --destination extracted
 
 FROM eclipse-temurin:21-jre
 WORKDIR /application
 
-COPY --from=builder /application/dependencies/ ./
-COPY --from=builder /application/spring-boot-loader/ ./
-COPY --from=builder /application/snapshot-dependencies/ ./
-COPY --from=builder /application/application/ ./
+COPY --from=builder /application/extracted/dependencies/ ./
+COPY --from=builder /application/extracted/spring-boot-loader/ ./
+COPY --from=builder /application/extracted/snapshot-dependencies/ ./
+COPY --from=builder /application/extracted/application/ ./
 
 ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
 

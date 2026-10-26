@@ -4,15 +4,18 @@ import com.polezhaiev.avtodiva.dto.schedule.CreateScheduleSlotRequestDto;
 import com.polezhaiev.avtodiva.dto.schedule.SlotSearchParametersDto;
 import com.polezhaiev.avtodiva.dto.schedule.ScheduleSlotResponseDto;
 import com.polezhaiev.avtodiva.dto.schedule.UpdateScheduleSlotRequestDto;
+import com.polezhaiev.avtodiva.dto.schedule.event.ScheduleSlotDomainEvent;
 import com.polezhaiev.avtodiva.mapper.ScheduleSlotMapper;
 import com.polezhaiev.avtodiva.model.Car;
 import com.polezhaiev.avtodiva.model.Instructor;
 import com.polezhaiev.avtodiva.model.ScheduleSlot;
 import com.polezhaiev.avtodiva.model.Student;
+import com.polezhaiev.avtodiva.model.event.SlotEventType;
 import com.polezhaiev.avtodiva.repository.*;
 import com.polezhaiev.avtodiva.repository.spec.impl.ScheduleSlotSpecificationBuilder;
 import com.polezhaiev.avtodiva.service.schedule.util.ScheduleValidatorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ public class ScheduleSlotService {
     private final ScheduleSlotMapper scheduleSlotMapper;
     private final ScheduleValidatorService scheduleValidatorService;
     private final ScheduleSlotSpecificationBuilder specificationBuilder;
+    private final ApplicationEventPublisher eventPublisher;
 
     public ScheduleSlotResponseDto create(CreateScheduleSlotRequestDto requestDto) {
         scheduleValidatorService.checkScheduleConflicts(requestDto);
@@ -64,6 +68,9 @@ public class ScheduleSlotService {
 
         ScheduleSlotResponseDto responseDto = scheduleSlotMapper.toResponseDto(saved);
         responseDto.setBooked(saved.getBooked());
+
+        eventPublisher.publishEvent(new ScheduleSlotDomainEvent(saved, SlotEventType.SLOT_BOOKED));
+
         return responseDto;
     }
 
@@ -112,6 +119,8 @@ public class ScheduleSlotService {
         scheduleSlotFromRepo.setBooked(false);
 
         scheduleSlotRepository.save(scheduleSlotFromRepo);
+
+        eventPublisher.publishEvent(new ScheduleSlotDomainEvent(scheduleSlotFromRepo, SlotEventType.SLOT_CANCELLED));
     }
 
     public void deleteSlotsByCarId(Long carId) {
@@ -145,6 +154,7 @@ public class ScheduleSlotService {
         Instructor instructor = instructorRepository.findById(requestDto.getInstructorId()).orElseThrow(
                 () -> new RuntimeException("Can't find instructor by id: " + requestDto.getInstructorId())
         );
+
         Car car = carRepository.findById(requestDto.getCarId()).orElseThrow(
                 () -> new RuntimeException("Can't find car by id: " + requestDto.getCarId())
         );
@@ -160,6 +170,8 @@ public class ScheduleSlotService {
         existing.setBooked(student != null);
 
         ScheduleSlot saved = scheduleSlotRepository.save(existing);
+
+        eventPublisher.publishEvent(new ScheduleSlotDomainEvent(saved, SlotEventType.SLOT_UPDATED));
 
         return scheduleSlotMapper.toResponseDto(saved);
     }
