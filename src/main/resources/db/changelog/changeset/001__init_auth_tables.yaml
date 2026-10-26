@@ -1,4 +1,5 @@
 databaseChangeLog:
+  - logicalFilePath: db/changelog/changeset/001__init_auth_tables.yaml
   - changeSet:
       id: 20260611-01-create-roles-table
       author: polezhaiev

@@ -1,4 +1,5 @@
 databaseChangeLog:
+  - logicalFilePath: db/changelog/changeset/002__init_business_tables.yaml
   - changeSet:
       id: 20260611-04-create-cars-and-students
       author: polezhaiev

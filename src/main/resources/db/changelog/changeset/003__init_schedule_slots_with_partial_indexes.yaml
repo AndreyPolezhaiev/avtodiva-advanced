@@ -1,4 +1,5 @@
 databaseChangeLog:
+  - logicalFilePath: db/changelog/changeset/003__init_schedule_slots_with_partial_indexes.yaml
   - changeSet:
       id: 20260611-07-create-schedule-slots-table
       author: polezhaiev

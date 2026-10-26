@@ -1,4 +1,5 @@
 databaseChangeLog:
+  - logicalFilePath: db/changelog/changeset/004__add_lesson_price_to_cars.yaml
   - changeSet:
       id: 20261020-09-add-lesson-price-to-cars
       author: polezhaiev
